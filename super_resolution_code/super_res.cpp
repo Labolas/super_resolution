@@ -61,17 +61,17 @@ int main()
   RGBtoYUV(I, Y_HF, Cb_HF, Cr_HF);
 
   vpDisplayX d1(I) ;
-  vpDisplayX d2(Y) ;
-  vpDisplayX d3(Cb) ;
-  vpDisplayX d4(Cr) ;
+  vpDisplayX d2(Y_HF) ;
+  vpDisplayX d3(Cb_HF) ;
+  vpDisplayX d4(Cr_HF) ;
   vpDisplay::display(I) ;
-  vpDisplay::display(Y) ;
-  vpDisplay::display(Cb) ;
-  vpDisplay::display(Cr) ;
+  vpDisplay::display(Y_HF) ;
+  vpDisplay::display(Cb_HF) ;
+  vpDisplay::display(Cr_HF) ;
   vpDisplay::flush(I) ;
-  vpDisplay::flush(Y) ;
-  vpDisplay::flush(Cb) ;
-  vpDisplay::flush(Cr) ;
+  vpDisplay::flush(Y_HF) ;
+  vpDisplay::flush(Cb_HF) ;
+  vpDisplay::flush(Cr_HF) ;
   vpDisplay::getClick(I) ;
 
 
