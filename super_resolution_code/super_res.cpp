@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <visp/vpDebug.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
@@ -22,18 +23,38 @@ RGBtoYUV(const vpImage<vpRGBa> &I,
 }
 
 static void
-createDico(const vpImage<unsigned char> &comp)
+upscale(const vpImage<unsigned char> &compL, vpImage<unsigned char> &compH)
+{
+  int h=compL.getHeight(), w=compL.getWidth();
+  
+  // TODO: upscale compL in compH
+}
+
+static void
+downscale(const vpImage<unsigned char> &compH, vpImage<unsigned char> &compL)
+{
+  int h=compL.getHeight(), w=compL.getWidth();
+  
+  // TODO: downscale compL in compH
+}
+
+
+
+static void
+createDico(const vpImage<unsigned char> &comp, vector<unsigned char> * Dl, vector<unsigned char> * Dh)
 {
   int h=comp.getHeight(), w=comp.getWidth();
 
   // dans une dizaine d'images, passage VGG16
-  // récupérations de cartes 
+  // récupérations de cartes intéressantes (conv2-1, conv2-2)
   
-  // 
+  // ajout de chaque carte sélectionnée dans les dictionnaires Dh et Dl
+  
 }
 
 static void
-Reconstruction(/* arguments */) {
+Reconstruction(/* arguments */)
+{
 	/* code */
 	//On a Image BF
 	//On  Bicubique
@@ -50,6 +71,8 @@ int main()
   int h=319, w=480;
   vpImage<vpRGBa> I(h,w,0);
 
+  vector<unsigned char> dico[256];
+  
   vpImage<unsigned char> Y_HF (h,w);
   vpImage<unsigned char> Cb_HF(h,w);
   vpImage<unsigned char> Cr_HF(h,w);
@@ -64,17 +87,17 @@ int main()
   RGBtoYUV(I, Y_HF, Cb_HF, Cr_HF);
 
   vpDisplayX d1(I) ;
-  vpDisplayX d2(Y) ;
-  vpDisplayX d3(Cb) ;
-  vpDisplayX d4(Cr) ;
+  vpDisplayX d2(Y_HF) ;
+  vpDisplayX d3(Cb_HF) ;
+  vpDisplayX d4(Cr_HF) ;
   vpDisplay::display(I) ;
-  vpDisplay::display(Y) ;
-  vpDisplay::display(Cb) ;
-  vpDisplay::display(Cr) ;
+  vpDisplay::display(Y_HF) ;
+  vpDisplay::display(Cb_HF) ;
+  vpDisplay::display(Cr_HF) ;
   vpDisplay::flush(I) ;
-  vpDisplay::flush(Y) ;
-  vpDisplay::flush(Cb) ;
-  vpDisplay::flush(Cr) ;
+  vpDisplay::flush(Y_HF) ;
+  vpDisplay::flush(Cb_HF) ;
+  vpDisplay::flush(Cr_HF) ;
   vpDisplay::getClick(I) ;
 
 
