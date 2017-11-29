@@ -9,6 +9,8 @@
 /home/labolas/cav/super_resolution_code/super_res.cpp
 iostream
 -
+vector
+-
 visp/vpDebug.h
 -
 visp/vpImage.h
