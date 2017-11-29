@@ -291,23 +291,6 @@ int main()
   bicubicresize(I_LR, I_HR);
 
   // convertion to YUV
-<<<<<<< HEAD
-  RGBtoYUV(I, Y_HF, Cb_HF, Cr_HF);
-
-  vpDisplayX d1(I) ;
-  vpDisplayX d2(Y_HF) ;
-  vpDisplayX d3(Cb_HF) ;
-  vpDisplayX d4(Cr_HF) ;
-  vpDisplay::display(I) ;
-  vpDisplay::display(Y_HF) ;
-  vpDisplay::display(Cb_HF) ;
-  vpDisplay::display(Cr_HF) ;
-  vpDisplay::flush(I) ;
-  vpDisplay::flush(Y_HF) ;
-  vpDisplay::flush(Cb_HF) ;
-  vpDisplay::flush(Cr_HF) ;
-  vpDisplay::getClick(I) ;
-=======
   RGBtoYUV(I_LR, Y_LR, Cb_LR, Cr_LR);
 
   vpDisplayX d1(I_LR) ;
@@ -320,7 +303,6 @@ int main()
   vpDisplay::flush(I_HR) ;
   vpDisplay::flush(Y_LR) ;
   vpDisplay::getClick(I_LR) ;
->>>>>>> 08df122aa08da1b4a63adbaae499d6da2f15878a
 
 
   return 0;
