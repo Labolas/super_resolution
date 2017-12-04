@@ -42,14 +42,14 @@ getpixelG(const vpImage<vpRGBa>& in, unsigned y, unsigned x)
 
     return 0;
 }
-inline unsigned char
-getpixelB(const vpImage<vpRGBa>& in, unsigned y, unsigned x)
+inline double
+getpixelB(const vpImage<vpRGBa>& in, unsigned int y, unsigned int x)
 {
   int h=in.getHeight(), w=in.getWidth();
     if (x < w && y < h)
-        return in[y][x].B;
+        return (double)(in[y][x].B);
 
-    return 0;
+    return 0.0;
 }
 
 static void
@@ -58,10 +58,10 @@ bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
   int h=in.getHeight(), w=in.getHeight();
   int out_h=out.getHeight(), out_w=out.getWidth();
 
-  const float tx = float(w) / out_w;
-  const float ty = float(h) / out_h;
+  const double tx = double(w) / out_w;
+  const double ty = double(h) / out_h;
 
-  unsigned char C[5] = { 0 };
+  double C[5] = { 0 };
 
     for (int i = 0; i < out_h; ++i)
     {
@@ -69,19 +69,19 @@ bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
        {
          const int x = int(tx * j);
          const int y = int(ty * i);
-         const float dx = tx * j - x;
-         const float dy = ty * i - y;
+         const double dx = tx * j - x;
+         const double dy = ty * i - y;
 
          for (int jj = 0; jj < 4; ++jj)
          {
            const int z = y - 1 + jj;
-           unsigned char a0 = getpixelR(in, z, x);
-           unsigned char d0 = getpixelR(in, z, x - 1) - a0;
-           unsigned char d2 = getpixelR(in, z, x + 1) - a0;
-           unsigned char d3 = getpixelR(in, z, x + 2) - a0;
-           unsigned char a1 = -1.0 / 3 * d0 + d2 - 1.0 / 6 * d3;
-           unsigned char a2 = 1.0 / 2 * d0 + 1.0 / 2 * d2;
-           unsigned char a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
+           double a0 = getpixelR(in, z, x);
+           double d0 = getpixelR(in, z, x - 1) - a0;
+           double d2 = getpixelR(in, z, x + 1) - a0;
+           double d3 = getpixelR(in, z, x + 2) - a0;
+           double a1 = -1.0 / 3 * d0 + d2 - 1.0 / 6 * d3;
+           double a2 = 1.0 / 2 * d0 + 1.0 / 2 * d2;
+           double a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
            C[jj] = a0 + a1 * dx + a2 * dx * dx + a3 * dx * dx * dx;
 
            d0 = C[0] - C[1];
@@ -91,20 +91,25 @@ bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
            a1 = -1.0 / 3 * d0 + d2 -1.0 / 6 * d3;
            a2 = 1.0 / 2 * d0 + 1.0 / 2 * d2;
            a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
-           out[i][j].R = a0 + a1 * dy + a2 * dy * dy + a3 * dy * dy * dy;
+
+           double tmp = a0 + a1 * dy + a2 * dy * dy + a3 * dy * dy * dy;
+           
+           if(tmp>255) tmp=255;
+           if(tmp<0) tmp=0;
+           out[i][j].R = (unsigned char)(tmp);
          }
 
 
          for (int jj = 0; jj < 4; ++jj)
          {
            const int z = y - 1 + jj;
-           unsigned char a0 = getpixelG(in, z, x);
-           unsigned char d0 = getpixelG(in, z, x - 1) - a0;
-           unsigned char d2 = getpixelG(in, z, x + 1) - a0;
-           unsigned char d3 = getpixelG(in, z, x + 2) - a0;
-           unsigned char a1 = -1.0 / 3 * d0 + d2 - 1.0 / 6 * d3;
-           unsigned char a2 = 1.0 / 2 * d0 + 1.0 / 2 * d2;
-           unsigned char a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
+           double a0 = getpixelG(in, z, x);
+           double d0 = getpixelG(in, z, x - 1) - a0;
+           double d2 = getpixelG(in, z, x + 1) - a0;
+           double d3 = getpixelG(in, z, x + 2) - a0;
+           double a1 = -1.0 / 3 * d0 + d2 - 1.0 / 6 * d3;
+           double a2 = 1.0 / 2 * d0 + 1.0 / 2 * d2;
+           double a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
            C[jj] = a0 + a1 * dx + a2 * dx * dx + a3 * dx * dx * dx;
 
            d0 = C[0] - C[1];
@@ -114,19 +119,24 @@ bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
            a1 = -1.0 / 3 * d0 + d2 -1.0 / 6 * d3;
            a2 = 1.0 / 2 * d0 + 1.0 / 2 * d2;
            a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
-           out[i][j].G = a0 + a1 * dy + a2 * dy * dy + a3 * dy * dy * dy;
+           
+           double tmp = a0 + a1 * dy + a2 * dy * dy + a3 * dy * dy * dy;
+           
+           if(tmp>255) tmp=255;
+           if(tmp<0) tmp=0;
+           out[i][j].G = (unsigned char)(tmp);
          }
 
          for (int jj = 0; jj < 4; ++jj)
          {
            const int z = y - 1 + jj;
-           unsigned char a0 = getpixelB(in, z, x);
-           unsigned char d0 = getpixelB(in, z, x - 1) - a0;
-           unsigned char d2 = getpixelB(in, z, x + 1) - a0;
-           unsigned char d3 = getpixelB(in, z, x + 2) - a0;
-           unsigned char a1 = -1.0 / 3 * d0 + d2 - 1.0 / 6 * d3;
-           unsigned char a2 = 1.0 / 2 * d0 + 1.0 / 2 * d2;
-           unsigned char a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
+           double a0 = getpixelB(in, z, x);
+           double d0 = getpixelB(in, z, x - 1) - a0;
+           double d2 = getpixelB(in, z, x + 1) - a0;
+           double d3 = getpixelB(in, z, x + 2) - a0;
+           double a1 = -1.0 / 3 * d0 + d2 - 1.0 / 6 * d3;
+           double a2 = 1.0 / 2 * d0 + 1.0 / 2 * d2;
+           double a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
            C[jj] = a0 + a1 * dx + a2 * dx * dx + a3 * dx * dx * dx;
 
            d0 = C[0] - C[1];
@@ -134,9 +144,14 @@ bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
            d3 = C[3] - C[1];
            a0 = C[1];
            a1 = -1.0 / 3 * d0 + d2 -1.0 / 6 * d3;
-           a2 = 1.0 / 2 * d0 + 1.0 / 2 * d2;
+           a2 =  1.0 / 2 * d0 + 1.0 / 2 * d2;
            a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
-           out[i][j].B = a0 + a1 * dy + a2 * dy * dy + a3 * dy * dy * dy;
+           
+           double tmp = a0 + a1 * dy + a2 * dy * dy + a3 * dy * dy * dy;
+           
+           if(tmp>255) tmp=255;
+           if(tmp<0) tmp=0;
+           out[i][j].B = (unsigned char)(tmp);
          }
        }
     }
@@ -281,11 +296,11 @@ int main()
   vpImage<unsigned char> Cb_HR(h*n,w*n);
   vpImage<unsigned char> Cr_HR(h*n,w*n);
 
-	vpImage<unsigned char> Y_LR (h,w);
+  <unsigned char> Y_LR (h,w);
   vpImage<unsigned char> Cb_LR(h,w);
   vpImage<unsigned char> Cr_LR(h,w);
 
-  vpImageIo::read(I_LR,"../img/lion.jpg") ;
+  vpImageIo::read(I_LR,"../data/img/lion.jpg") ;
 
   bicubicresize(I_LR, I_HR);
 
