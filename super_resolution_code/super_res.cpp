@@ -231,7 +231,7 @@ vpRGBa bilinearInterpol(const vpImage<vpRGBa> &I,
  * @param N: facteur d agrandissement
  */
 static void
-upscale(const vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR, const unsigned int &N)
+upscale_bilinearInterpol(const vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR, const unsigned int &N)
 {
   int h=LR.getHeight(), w= LR.getWidth();
 
@@ -273,7 +273,8 @@ createDico(const vpImage<unsigned char> &comp, vector<unsigned char> * Dl, vecto
 static void
 Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 {
-	upscale(LR, HR, 2); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
+  
+	bicubicresize(LR, HR); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
 
 	system("python CAV.py lion.jpg");
 
@@ -298,14 +299,15 @@ int main()
   vpImage<unsigned char> Cb_HR(h*n,w*n);
   vpImage<unsigned char> Cr_HR(h*n,w*n);
 
-  <unsigned char> Y_LR (h,w);
+  vpImage<unsigned char> Y_LR (h,w);
   vpImage<unsigned char> Cb_LR(h,w);
   vpImage<unsigned char> Cr_LR(h,w);
 
   vpImageIo::read(I_LR,"../data/img/lion.jpg") ;
 
   bicubicresize(I_LR, I_HR);
-
+  //upscale(I_LR, I_HR, n);
+  
   // convertion to YUV
   RGBtoYUV(I_LR, Y_LR, Cb_LR, Cr_LR);
 
