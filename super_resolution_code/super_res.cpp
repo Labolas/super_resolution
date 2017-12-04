@@ -271,14 +271,21 @@ createDico(const vpImage<unsigned char> &comp, vector<unsigned char> * Dl, vecto
 }
 
 static void
-Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
+Reconstruction(vpImage<vpRGBa> &LR, const int &n)
 {
-  
+	int h = LR.getHeight();
+	int w = LR.getWidth();
+	string imgPath = "../data/img/";
+
+  vpImage<vpRGBa> HR(h*n,w*n);
+
 	bicubicresize(LR, HR); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
 
-	system("python CAV.py lion.jpg");
+	vpImageIo::write(HR,imgPath+"Reconst_HR.jpg");
 
-	//On vgg16 le resultat de ça
+	system("python CAV.py Reconst_HR.jpg"); 	//On vgg16 le resultat de ça
+
+
 	//On obtient des cartes de features
 	//On sélectionne un patch dans l'image et donc aussi dans les cartes de features
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
@@ -288,6 +295,7 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 
 int main()
 {
+	//char* imgPath = "../data/img";
   int h=319, w=480;
   int n=2;
   vpImage<vpRGBa> I_LR(h,w,0);
@@ -305,13 +313,13 @@ int main()
 
   vpImageIo::read(I_LR,"../data/img/lion.jpg") ;
 
-  bicubicresize(I_LR, I_HR);
+  //bicubicresize(I_LR, I_HR);
   //upscale(I_LR, I_HR, n);
-  
-  // convertion to YUV
-  RGBtoYUV(I_LR, Y_LR, Cb_LR, Cr_LR);
 
-  vpDisplayX d1(I_LR) ;
+  // convertion to YUV
+  //RGBtoYUV(I_LR, Y_LR, Cb_LR, Cr_LR);
+
+  /*vpDisplayX d1(I_LR) ;
   vpDisplayX d2(I_HR) ;
   vpDisplayX d3(Y_LR) ;
   vpDisplay::display(I_LR) ;
@@ -320,7 +328,8 @@ int main()
   vpDisplay::flush(I_LR) ;
   vpDisplay::flush(I_HR) ;
   vpDisplay::flush(Y_LR) ;
-  vpDisplay::getClick(I_LR) ;
+  vpDisplay::getClick(I_LR) ;*/
 
+	Reconstruction(I_LR,n);
   return 0;
 }
