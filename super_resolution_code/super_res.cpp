@@ -271,11 +271,9 @@ createDico(const vpImage<unsigned char> &comp, vector<unsigned char> * Dl, vecto
 }
 
 static void
-Reconstruction(/* arguments */)
+Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 {
-	/* code */
-	//On a Image BF
-	//On  Bicubique
+	upscale(LR, HR, const unsigned int &N); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
 	//On vgg16 le resultat de ça
 	//On obtient des cartes de features
 	//On sélectionne un patch dans l'image et donc aussi dans les cartes de features
