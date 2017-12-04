@@ -141,7 +141,7 @@ def extract_features(model, output_folder, image, n):
                     if True or np.max(image) != 0: # if empty, drop feature
                         ma, mi = max(np.max(image), ma), min(np.min(image), mi)
                         #np.savetxt(layer_output_folder+"%s_%s_%s.csv" % (i+1, model.layers[i].name,j), image)
-                        save_feature(layer_output_folder+"%s_%s_%s.png" % (i+1, model.layers[i].name,j), image)
+                        save_feature(layer_output_folder+"%s_%s_%s.png" % (i+1, "conv2-vgg16",j), image)
                         #image[:,:] *= 255.0 / max(np.max(image),1)  # change dynamic to [0,255]
                         #image = image.astype(np.int)
                         #print(layer_output_folder+"%s_%s_%s.png" % (i+1, model.layers[i].name,j))

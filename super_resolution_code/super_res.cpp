@@ -287,7 +287,11 @@ Reconstruction(vpImage<vpRGBa> &LR, const int &n)
 
 
 	//On obtient des cartes de features
+
+
 	//On sélectionne un patch dans l'image et donc aussi dans les cartes de features
+	
+
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
 	//Selon le coef de correlation(=prod scal) plus il est grand mieux c'est
 
