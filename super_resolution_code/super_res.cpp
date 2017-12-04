@@ -1,4 +1,3 @@
-#include "/usr/include/python2.7/Python.h"
 #include <iostream>
 #include <vector>
 #include <visp/vpDebug.h>
@@ -93,7 +92,7 @@ bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
            a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
 
            double tmp = a0 + a1 * dy + a2 * dy * dy + a3 * dy * dy * dy;
-           
+
            if(tmp>255) tmp=255;
            if(tmp<0) tmp=0;
            out[i][j].R = (unsigned char)(tmp);
@@ -119,9 +118,9 @@ bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
            a1 = -1.0 / 3 * d0 + d2 -1.0 / 6 * d3;
            a2 = 1.0 / 2 * d0 + 1.0 / 2 * d2;
            a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
-           
+
            double tmp = a0 + a1 * dy + a2 * dy * dy + a3 * dy * dy * dy;
-           
+
            if(tmp>255) tmp=255;
            if(tmp<0) tmp=0;
            out[i][j].G = (unsigned char)(tmp);
@@ -146,9 +145,9 @@ bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
            a1 = -1.0 / 3 * d0 + d2 -1.0 / 6 * d3;
            a2 =  1.0 / 2 * d0 + 1.0 / 2 * d2;
            a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
-           
+
            double tmp = a0 + a1 * dy + a2 * dy * dy + a3 * dy * dy * dy;
-           
+
            if(tmp>255) tmp=255;
            if(tmp<0) tmp=0;
            out[i][j].B = (unsigned char)(tmp);
@@ -275,6 +274,9 @@ static void
 Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 {
 	upscale(LR, HR, 2); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
+
+	system("python CAV.py lion.jpg");
+
 	//On vgg16 le resultat de ça
 	//On obtient des cartes de features
 	//On sélectionne un patch dans l'image et donc aussi dans les cartes de features
@@ -317,7 +319,6 @@ int main()
   vpDisplay::flush(I_HR) ;
   vpDisplay::flush(Y_LR) ;
   vpDisplay::getClick(I_LR) ;
-
 
   return 0;
 }
