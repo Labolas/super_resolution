@@ -1,3 +1,4 @@
+#include "/usr/include/python2.7/Python.h"
 #include <iostream>
 #include <vector>
 #include <visp/vpDebug.h>
@@ -258,7 +259,7 @@ createDico(const vpImage<unsigned char> &comp, vector<unsigned char> * Dl, vecto
 static void
 Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 {
-	upscale(LR, HR, const unsigned int &N); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
+	upscale(LR, HR, 2); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
 	//On vgg16 le resultat de ça
 	//On obtient des cartes de features
 	//On sélectionne un patch dans l'image et donc aussi dans les cartes de features
