@@ -4,6 +4,7 @@
 import sys
 sys.path.append('/your/dir/to/tensorflow/models') # point to your tensorflow dir
 sys.path.append('/your/dir/to/tensorflow/models/slim') # point ot your slim dir
+NomImage = sys.argv[1] #
 
 import keras
 import numpy as np
@@ -110,8 +111,8 @@ def extract_features(model, output_folder, image, n):
         os.makedirs(output_folder)
     print(output_folder)
 
-    for i,features in enumerate(layer_outs[len(layer_outs)-10:]): #select 2 last layers
-        layer_output_folder = output_folder+str(len(layer_outs)-10+i)+"/"
+    for i,features in enumerate(layer_outs[4:6]): #select 2 last layers
+        layer_output_folder = output_folder+"conv2/"
         if not os.path.exists(layer_output_folder):
             os.makedirs(layer_output_folder)
         print(layer_output_folder)
@@ -169,8 +170,8 @@ def main():
     #classify(model_name, image_name)
 
 
-    images_folder_path = "data/img/"
-    output_folder = "data/out/"+model_name+"/"
+    images_path = "../data/img/"+NomImage
+    output_folder = "../data/out/"
 
     #get all the image names (whose feature folder does not already exist)
     from os import walk
@@ -181,25 +182,26 @@ def main():
         break
     print(len(folders),"features folders found")
     f = []
-    for (dir_path, dir_names, files_names) in walk(images_folder_path):
-        for f_n in files_names:
-            fn = path.splitext(f_n)[0] #remove extension
-            if not(fn in folders):
-                print(fn)
-                f.append(f_n)
-        break
-    files_names = f
-    print(len(files_names),"images found")
-    if len(files_names) == 0:
-        exit(0)
+    #for (dir_path, dir_names, files_names) in walk(images_folder_path):
+        #for f_n in files_names:
+            #fn = path.splitext(images_path)[0] #remove extension
+            #if not(fn in folders):
+                #print(fn)
+                #f.append(f_n)
+        #break
+    #files_names = f
+    #print(len(files_names),"images found")
+    #if len(files_names) == 0:
+    #    exit(0)
 
     #load the images
     images = []
-    for file_name in files_names:
-        image_name = images_folder_path+file_name
-        image = load_image(image_name)
-        images.append(image)
-    print(len(images),"images loaded")
+    #for file_name in files_names:
+        #image_name = images_folder_path+file_name
+    image = load_image(images_path)
+        #images.append(image)
+    images.append(image)
+    #print(len(images),"images loaded")
 
     #load the model
     model = load_model(model_name, images[0].shape[1:4], False)
@@ -209,7 +211,8 @@ def main():
     from os import path
     for i in range(len(images)):
         image = images[i]
-        image_name = path.splitext(files_names[i])[0] #remove the extension
+        #image_name = path.splitext(files_names[i])[0] #remove the extension
+        image_name = path.splitext(NomImage)[0] #remove the extension
         extract_features(model, output_folder+image_name+"/", image, 0)
     print("features extracted")
 

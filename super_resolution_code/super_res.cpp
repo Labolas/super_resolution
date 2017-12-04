@@ -92,7 +92,7 @@ bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
            a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
 
            double tmp = a0 + a1 * dy + a2 * dy * dy + a3 * dy * dy * dy;
-           
+
            if(tmp>255) tmp=255;
            if(tmp<0) tmp=0;
            out[i][j].R = (unsigned char)(tmp);
@@ -118,9 +118,9 @@ bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
            a1 = -1.0 / 3 * d0 + d2 -1.0 / 6 * d3;
            a2 = 1.0 / 2 * d0 + 1.0 / 2 * d2;
            a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
-           
+
            double tmp = a0 + a1 * dy + a2 * dy * dy + a3 * dy * dy * dy;
-           
+
            if(tmp>255) tmp=255;
            if(tmp<0) tmp=0;
            out[i][j].G = (unsigned char)(tmp);
@@ -145,9 +145,9 @@ bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
            a1 = -1.0 / 3 * d0 + d2 -1.0 / 6 * d3;
            a2 =  1.0 / 2 * d0 + 1.0 / 2 * d2;
            a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
-           
+
            double tmp = a0 + a1 * dy + a2 * dy * dy + a3 * dy * dy * dy;
-           
+
            if(tmp>255) tmp=255;
            if(tmp<0) tmp=0;
            out[i][j].B = (unsigned char)(tmp);
@@ -231,7 +231,7 @@ vpRGBa bilinearInterpol(const vpImage<vpRGBa> &I,
  * @param N: facteur d agrandissement
  */
 static void
-upscale_bilinearInterpol(const vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR, const unsigned int &N)
+upscale(const vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR, const unsigned int &N)
 {
   int h=LR.getHeight(), w= LR.getWidth();
 
@@ -273,7 +273,10 @@ createDico(const vpImage<unsigned char> &comp, vector<unsigned char> * Dl, vecto
 static void
 Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 {
-	upscale_bilinearInterpol(LR, HR, 2); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
+	upscale(LR, HR, 2); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
+
+	system("python CAV.py lion.jpg");
+
 	//On vgg16 le resultat de ça
 	//On obtient des cartes de features
 	//On sélectionne un patch dans l'image et donc aussi dans les cartes de features
@@ -295,15 +298,14 @@ int main()
   vpImage<unsigned char> Cb_HR(h*n,w*n);
   vpImage<unsigned char> Cr_HR(h*n,w*n);
 
-  vpImage<unsigned char> Y_LR (h,w);
+  <unsigned char> Y_LR (h,w);
   vpImage<unsigned char> Cb_LR(h,w);
   vpImage<unsigned char> Cr_LR(h,w);
 
   vpImageIo::read(I_LR,"../data/img/lion.jpg") ;
 
   bicubicresize(I_LR, I_HR);
-  //upscale(I_LR, I_HR, n);
-  
+
   // convertion to YUV
   RGBtoYUV(I_LR, Y_LR, Cb_LR, Cr_LR);
 
@@ -317,7 +319,6 @@ int main()
   vpDisplay::flush(I_HR) ;
   vpDisplay::flush(Y_LR) ;
   vpDisplay::getClick(I_LR) ;
-
 
   return 0;
 }
