@@ -41,6 +41,20 @@ RGBtoYUV(const vpImage<vpRGBa> &I,
     }
 }
 
+static void
+vpYCbCr_to_double(const vpImage<vpYCbCr> &I,
+	 vpImage<double> &Y, vpImage<double> &Cb, vpImage<double> &Cr)
+{
+  int h=I.getHeight(), w=I.getWidth();
+
+  for(int i=0; i<h; i++)
+    for(int j=0; j<w; j++)
+    {
+      Y[i][j]  =   	(double)I[i][j].R;
+      Cb[i][j] = 		(double)I[i][j].G;
+      Cr[i][j] =   	(double)I[i][j].B;
+    }
+}
 
 #if BICUBIC
 inline unsigned char
@@ -289,18 +303,24 @@ createDico(const vpImage<unsigned char> &comp, vector<unsigned char> * Dl, vecto
 /////////////////////////////////////////////////
 static void
 Python_Features(vpImage<vpRGBa> &HR) {
+	string imgPath = "../data/img/";
 	vpImageIo::write(HR,imgPath+"Reconst_HR.jpg");
 	system("python CAV.py Reconst_HR.jpg"); 	//On vgg16 le resultat de ça
 }
 
 static void
-PatchManager(vpImage<vpRGBa> &HR, vpImage<double> &res) {
+PatchManager(vpImage<vpRGBa> &HR,
+	vpImage<double> &resY, vpImage<double> &resCb,vpImage<double> &resCr) {
 
 	int h_HR = HR.getHeight();
 	int w_HR = HR.getWidth();
+
+	vpImage<double> hrY(h_HR,w_HR); vpImage<double> hrCb(h_HR,w_HR); vpImage<double> hrCr(h_HR,w_HR);
+	RGBtoYUV_Double(HR,hrY,hrCb,hrCr);
+
 	//On sélectionne un patch dans l'image et donc aussi dans les cartes de features
 	int compteur = 0; //compteur pour la moyenne
-	double sum = 0;
+	double sumY = 0;double sumCb = 0;double sumCr = 0;
 	for(int i = 0 ; i<h_HR; i++)
 	{
 		for (int j = 0; j<w_HR; j++)
@@ -311,13 +331,17 @@ PatchManager(vpImage<vpRGBa> &HR, vpImage<double> &res) {
 				{
 					if(ii+i >= 0 || ii+i < h_HR || jj+j >= 0 || jj+j < w_HR)
 					{
-						sum += HR[i+ii][j+jj];
+						sumY	 += hrY[i+ii][j+jj];
+						sumCb	 += hrCb[i+ii][j+jj];
+						sumCr	 += hrCr[i+ii][j+jj];
 						compteur ++;
 					}
 				}
 			}
 
-			double moyPatch = sum / compteur;
+			double moyPatchY 	= sumY  / compteur;
+			double moyPatchCb = sumCb / compteur;
+			double moyPatchCr = sumCr / compteur;
 
 			for(int iii = -4 ; iii<5 ; iii++)
 			{
@@ -325,7 +349,9 @@ PatchManager(vpImage<vpRGBa> &HR, vpImage<double> &res) {
 				{
 					if(iii+i >= 0 || iii+i < h_HR || jjj+j >= 0 || jjj+j < w_HR)
 					{
-						res[i+iii][j+jjj] = HR[i+iii][j+jjj] - moyPatch;
+						resY[i+iii][j+jjj] 	= hrY[i+iii][j+jjj]  - moyPatchY;
+						resCb[i+iii][j+jjj] = hrCb[i+iii][j+jjj] - moyPatchCb;
+						resCr[i+iii][j+jjj] = hrCr[i+iii][j+jjj] - moyPatchCr;
 					}
 				}
 			}
@@ -334,7 +360,8 @@ PatchManager(vpImage<vpRGBa> &HR, vpImage<double> &res) {
 }
 
 static void
-DicoVectorSelection(/*Dico de Basse Res*/, vpImage<double> &res) {
+DicoVectorSelection(/*Dico de Basse Res,*/
+	vpImage<double> &resY, vpImage<double> &resCb, vpImage<double> &resCr) {
 	//caster l'élément du dio en double
 }
 
@@ -342,22 +369,21 @@ DicoVectorSelection(/*Dico de Basse Res*/, vpImage<double> &res) {
 static void
 Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 {
+	int h = HR.getHeight();
+	int w = HR.getWidth();
 
-	int h = LR.getHeight();
-	int w = LR.getWidth();
-	string imgPath = "../data/img/";
-
-  vpImage<vpRGBa> HR(h*n,w*n);
-	vpImage<double> res(h*n,w*n);
+	vpImage<double> resY(h,w);
+	vpImage<double> resCb(h,w);
+	vpImage<double> resCr(h,w);
 
 	bicubicresize(LR, HR); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
 
 	Python_Features(HR); //On obtient des cartes de features
 
-	PatchManager(HR,res);
+	PatchManager(HR,resY,resCb,resCr);
 
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
-	DicoVectorSelection(/*dico de LR,*/ res);
+	DicoVectorSelection(/*dico de LR,*/ resY, resCb,resCr);
 
 	//garder le coef de correlation
 
@@ -382,6 +408,8 @@ int main()
 
   vpImageIo::read(I_LR,"../data/img/lion.jpg") ;
 
+	Reconstruction(I_LR,I_HR);
+/*
   bicubicresize(I_LR, I_HR);
   //upscale(I_LR, I_HR, n);
 
@@ -395,6 +423,6 @@ int main()
   vpDisplay::flush(I_LR) ;
   vpDisplay::flush(I_HR) ;
   vpDisplay::getClick(I_LR) ;
-
+*/
   return 0;
 }
