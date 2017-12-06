@@ -7,6 +7,25 @@
 
 using namespace std ;
 
+#define BICUBIC     1
+#define BILINEAR    0
+
+static void
+RGBtoYUV_Double(const vpImage<vpRGBa> &RGB, vpImage<double> &Y_D, vpImage<double> &Cb_D, vpImage<double> &Cr_D)
+{
+  int h=RGB.getHeight(), w=RGB.getWidth();
+
+  for(int i=0; i<h; i++)
+    for(int j=0; j<w; j++)
+    {
+      Y_D[i][j]  =   0.2125 * RGB[i][j].R + 0.7154 * RGB[i][j].G + 0.0721 * RGB[i][j].B;
+      Cb_D[i][j] = - 0.115  * RGB[i][j].R - 0.385  * RGB[i][j].G + 0.5    * RGB[i][j].B + 128;
+      Cr_D[i][j] =   0.5    * RGB[i][j].R - 0.454  * RGB[i][j].G - 0.046  * RGB[i][j].B + 128;
+    }
+}
+   
+   
+
 static void
 RGBtoYUV(const vpImage<vpRGBa> &I,
 	 vpImage<unsigned char> &Y, vpImage<unsigned char> &Cb, vpImage<unsigned char> &Cr)
@@ -23,6 +42,7 @@ RGBtoYUV(const vpImage<vpRGBa> &I,
 }
 
 
+#if BICUBIC
 inline unsigned char
 getpixelR(const vpImage<vpRGBa>& in, unsigned y, unsigned x)
 {
@@ -78,23 +98,23 @@ bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
            double d0 = getpixelR(in, z, x - 1) - a0;
            double d2 = getpixelR(in, z, x + 1) - a0;
            double d3 = getpixelR(in, z, x + 2) - a0;
-           double a1 = -1.0 / 3 * d0 + d2 - 1.0 / 6 * d3;
-           double a2 = 1.0 / 2 * d0 + 1.0 / 2 * d2;
-           double a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
+           double a1 = -1.0 / 3.0 * d0 + d2 - 1.0 / 6.0 * d3;
+           double a2 = 1.0 / 2.0 * d0 + 1.0 / 2.0 * d2;
+           double a3 = -1.0 / 6.0 * d0 - 1.0 / 2.0 * d2 + 1.0 / 6.0 * d3;
            C[jj] = a0 + a1 * dx + a2 * dx * dx + a3 * dx * dx * dx;
 
            d0 = C[0] - C[1];
            d2 = C[2] - C[1];
            d3 = C[3] - C[1];
            a0 = C[1];
-           a1 = -1.0 / 3 * d0 + d2 -1.0 / 6 * d3;
-           a2 = 1.0 / 2 * d0 + 1.0 / 2 * d2;
-           a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
+           a1 = -1.0 / 3.0 * d0 + d2 -1.0 / 6.0 * d3;
+           a2 = 1.0 / 2.0 * d0 + 1.0 / 2.0 * d2;
+           a3 = -1.0 / 6.0 * d0 - 1.0 / 2.0 * d2 + 1.0 / 6.0 * d3;
 
            double tmp = a0 + a1 * dy + a2 * dy * dy + a3 * dy * dy * dy;
 
-           if(tmp>255) tmp=255;
-           if(tmp<0) tmp=0;
+           if(tmp>255) tmp=255.0;
+           if(tmp<0) tmp=0.0;
            out[i][j].R = (unsigned char)(tmp);
          }
 
@@ -106,23 +126,23 @@ bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
            double d0 = getpixelG(in, z, x - 1) - a0;
            double d2 = getpixelG(in, z, x + 1) - a0;
            double d3 = getpixelG(in, z, x + 2) - a0;
-           double a1 = -1.0 / 3 * d0 + d2 - 1.0 / 6 * d3;
-           double a2 = 1.0 / 2 * d0 + 1.0 / 2 * d2;
-           double a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
+           double a1 = -1.0 / 3.0 * d0 + d2 - 1.0 / 6.0 * d3;
+           double a2 = 1.0 / 2.0 * d0 + 1.0 / 2.0 * d2;
+           double a3 = -1.0 / 6.0 * d0 - 1.0 / 2.0 * d2 + 1.0 / 6.0 * d3;
            C[jj] = a0 + a1 * dx + a2 * dx * dx + a3 * dx * dx * dx;
 
            d0 = C[0] - C[1];
            d2 = C[2] - C[1];
            d3 = C[3] - C[1];
            a0 = C[1];
-           a1 = -1.0 / 3 * d0 + d2 -1.0 / 6 * d3;
-           a2 = 1.0 / 2 * d0 + 1.0 / 2 * d2;
-           a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
+           a1 = -1.0 / 3.0 * d0 + d2 -1.0 / 6.0 * d3;
+           a2 = 1.0 / 2.0 * d0 + 1.0 / 2.0 * d2;
+           a3 = -1.0 / 6.0 * d0 - 1.0 / 2.0 * d2 + 1.0 / 6.0 * d3;
 
            double tmp = a0 + a1 * dy + a2 * dy * dy + a3 * dy * dy * dy;
 
-           if(tmp>255) tmp=255;
-           if(tmp<0) tmp=0;
+           if(tmp>255) tmp=255.0;
+           if(tmp<0) tmp=0.0;
            out[i][j].G = (unsigned char)(tmp);
          }
 
@@ -133,30 +153,31 @@ bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
            double d0 = getpixelB(in, z, x - 1) - a0;
            double d2 = getpixelB(in, z, x + 1) - a0;
            double d3 = getpixelB(in, z, x + 2) - a0;
-           double a1 = -1.0 / 3 * d0 + d2 - 1.0 / 6 * d3;
-           double a2 = 1.0 / 2 * d0 + 1.0 / 2 * d2;
-           double a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
+           double a1 = -1.0 / 3.0 * d0 + d2 - 1.0 / 6.0 * d3;
+           double a2 = 1.0 / 2.0 * d0 + 1.0 / 2.0 * d2;
+           double a3 = -1.0 / 6.0 * d0 - 1.0 / 2.0 * d2 + 1.0 / 6.0 * d3;
            C[jj] = a0 + a1 * dx + a2 * dx * dx + a3 * dx * dx * dx;
 
            d0 = C[0] - C[1];
            d2 = C[2] - C[1];
            d3 = C[3] - C[1];
            a0 = C[1];
-           a1 = -1.0 / 3 * d0 + d2 -1.0 / 6 * d3;
-           a2 =  1.0 / 2 * d0 + 1.0 / 2 * d2;
-           a3 = -1.0 / 6 * d0 - 1.0 / 2 * d2 + 1.0 / 6 * d3;
+           a1 = -1.0 / 3.0 * d0 + d2 -1.0 / 6.0 * d3;
+           a2 =  1.0 / 2.0 * d0 + 1.0 / 2.0 * d2;
+           a3 = -1.0 / 6.0 * d0 - 1.0 / 2.0 * d2 + 1.0 / 6.0 * d3;
 
            double tmp = a0 + a1 * dy + a2 * dy * dy + a3 * dy * dy * dy;
 
-           if(tmp>255) tmp=255;
-           if(tmp<0) tmp=0;
+           if(tmp>255) tmp=255.0;
+           if(tmp<0) tmp=0.0;
            out[i][j].B = (unsigned char)(tmp);
          }
        }
     }
 }
+#endif
 
-
+#if BILINEAR
 /**
  * Interpolation bilineaire
  * @param I : image agrandie incomplete
@@ -247,15 +268,7 @@ upscale_bilinearInterpol(const vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR, const u
     }
   }
 }
-
-static void
-downscale(const vpImage<vpRGBa> &HR, vpImage<vpRGBa> &LR, const unsigned int &L)
-{
-  int h=LR.getHeight(), w=LR.getWidth();
-
-  // TODO: downscale HR to LR
-}
-
+#endif
 
 
 static void
@@ -264,34 +277,25 @@ createDico(const vpImage<unsigned char> &comp, vector<unsigned char> * Dl, vecto
   int h=comp.getHeight(), w=comp.getWidth();
 
   // dans une dizaine d'images, passage VGG16
+  
   // récupérations de cartes intéressantes (conv2-1, conv2-2)
 
   // ajout de chaque carte sélectionnée dans les dictionnaires Dh et Dl
-
+  // (pour l'instant: sur chaque pixel, le patch sélectionné sera le plus proche)
+  
 }
 
 static void
-Reconstruction(vpImage<vpRGBa> &LR, const int &n)
+Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 {
-	int h = LR.getHeight();
-	int w = LR.getWidth();
-	string imgPath = "../data/img/";
-
-  vpImage<vpRGBa> HR(h*n,w*n);
-
+  
 	bicubicresize(LR, HR); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
 
-	vpImageIo::write(HR,imgPath+"Reconst_HR.jpg");
+	system("python CAV.py lion.jpg");
 
-	system("python CAV.py Reconst_HR.jpg"); 	//On vgg16 le resultat de ça
-
-
+	//On vgg16 le resultat de ça
 	//On obtient des cartes de features
-
-
 	//On sélectionne un patch dans l'image et donc aussi dans les cartes de features
-	
-
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
 	//Selon le coef de correlation(=prod scal) plus il est grand mieux c'est
 
@@ -299,7 +303,6 @@ Reconstruction(vpImage<vpRGBa> &LR, const int &n)
 
 int main()
 {
-	//char* imgPath = "../data/img";
   int h=319, w=480;
   int n=2;
   vpImage<vpRGBa> I_LR(h,w,0);
@@ -317,23 +320,19 @@ int main()
 
   vpImageIo::read(I_LR,"../data/img/lion.jpg") ;
 
-  //bicubicresize(I_LR, I_HR);
+  bicubicresize(I_LR, I_HR);
   //upscale(I_LR, I_HR, n);
-
+  
   // convertion to YUV
-  //RGBtoYUV(I_LR, Y_LR, Cb_LR, Cr_LR);
+  RGBtoYUV(I_LR, Y_LR, Cb_LR, Cr_LR);
 
-  /*vpDisplayX d1(I_LR) ;
+  vpDisplayX d1(I_LR) ;
   vpDisplayX d2(I_HR) ;
-  vpDisplayX d3(Y_LR) ;
   vpDisplay::display(I_LR) ;
   vpDisplay::display(I_HR) ;
-  vpDisplay::display(Y_LR) ;
   vpDisplay::flush(I_LR) ;
   vpDisplay::flush(I_HR) ;
-  vpDisplay::flush(Y_LR) ;
-  vpDisplay::getClick(I_LR) ;*/
+  vpDisplay::getClick(I_LR) ;
 
-	Reconstruction(I_LR,n);
   return 0;
 }
