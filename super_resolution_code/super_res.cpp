@@ -23,8 +23,8 @@ RGBtoYUV_Double(const vpImage<vpRGBa> &RGB, vpImage<double> &Y_D, vpImage<double
       Cr_D[i][j] =   0.5    * RGB[i][j].R - 0.454  * RGB[i][j].G - 0.046  * RGB[i][j].B + 128;
     }
 }
-   
-   
+
+
 
 static void
 RGBtoYUV(const vpImage<vpRGBa> &I,
@@ -277,27 +277,89 @@ createDico(const vpImage<unsigned char> &comp, vector<unsigned char> * Dl, vecto
   int h=comp.getHeight(), w=comp.getWidth();
 
   // dans une dizaine d'images, passage VGG16
-  
+
   // récupérations de cartes intéressantes (conv2-1, conv2-2)
 
   // ajout de chaque carte sélectionnée dans les dictionnaires Dh et Dl
   // (pour l'instant: sur chaque pixel, le patch sélectionné sera le plus proche)
-  
+
 }
+/////////////////////////////////////////////////
+//////////////Reconstrution Thibault
+/////////////////////////////////////////////////
+static void
+Python_Features(vpImage<vpRGBa> &HR) {
+	vpImageIo::write(HR,imgPath+"Reconst_HR.jpg");
+	system("python CAV.py Reconst_HR.jpg"); 	//On vgg16 le resultat de ça
+}
+
+static void
+PatchManager(vpImage<vpRGBa> &HR, vpImage<double> &res) {
+
+	int h_HR = HR.getHeight();
+	int w_HR = HR.getWidth();
+	//On sélectionne un patch dans l'image et donc aussi dans les cartes de features
+	int compteur = 0; //compteur pour la moyenne
+	double sum = 0;
+	for(int i = 0 ; i<h_HR; i++)
+	{
+		for (int j = 0; j<w_HR; j++)
+		{
+			for(int ii = -4 ; ii<5; ii++)
+			{
+				for (int jj = -4; jj<5; jj++)
+				{
+					if(ii+i >= 0 || ii+i < h_HR || jj+j >= 0 || jj+j < w_HR)
+					{
+						sum += HR[i+ii][j+jj];
+						compteur ++;
+					}
+				}
+			}
+
+			double moyPatch = sum / compteur;
+
+			for(int iii = -4 ; iii<5 ; iii++)
+			{
+				for (int jjj = -4 ; jjj<5; jjj++)
+				{
+					if(iii+i >= 0 || iii+i < h_HR || jjj+j >= 0 || jjj+j < w_HR)
+					{
+						res[i+iii][j+jjj] = HR[i+iii][j+jjj] - moyPatch;
+					}
+				}
+			}
+		}
+	}
+}
+
+static void
+DicoVectorSelection(/*Dico de Basse Res*/, vpImage<double> &res) {
+	//caster l'élément du dio en double
+}
+
 
 static void
 Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 {
-  
+
+	int h = LR.getHeight();
+	int w = LR.getWidth();
+	string imgPath = "../data/img/";
+
+  vpImage<vpRGBa> HR(h*n,w*n);
+	vpImage<double> res(h*n,w*n);
+
 	bicubicresize(LR, HR); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
 
-	system("python CAV.py lion.jpg");
+	Python_Features(HR); //On obtient des cartes de features
 
-	//On vgg16 le resultat de ça
-	//On obtient des cartes de features
-	//On sélectionne un patch dans l'image et donc aussi dans les cartes de features
+	PatchManager(HR,res);
+
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
-	//Selon le coef de correlation(=prod scal) plus il est grand mieux c'est
+	DicoVectorSelection(/*dico de LR,*/ res);
+
+	//garder le coef de correlation
 
 }
 
@@ -322,7 +384,7 @@ int main()
 
   bicubicresize(I_LR, I_HR);
   //upscale(I_LR, I_HR, n);
-  
+
   // convertion to YUV
   RGBtoYUV(I_LR, Y_LR, Cb_LR, Cr_LR);
 
