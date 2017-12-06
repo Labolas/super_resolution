@@ -1,11 +1,14 @@
 #include <iostream>
 #include <vector>
+#include <string>
 #include <visp/vpDebug.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplayX.h>
 
 using namespace std ;
+
+typedef vpRGBa vpYCbCr;
 
 #define BICUBIC     1
 #define BILINEAR    0
@@ -284,19 +287,51 @@ upscale_bilinearInterpol(const vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR, const u
 }
 #endif
 
+static void
+completeDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh)
+{
+   
+}
 
 static void
-createDico(const vpImage<unsigned char> &comp, vector<unsigned char> * Dl, vector<unsigned char> * Dh)
+createDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh)
 {
-  int h=comp.getHeight(), w=comp.getWidth();
-
+  vpImage<vpYCbCr> cartesLR, cartesHR;
+  
   // dans une dizaine d'images, passage VGG16
 
   // récupérations de cartes intéressantes (conv2-1, conv2-2)
-
+  
   // ajout de chaque carte sélectionnée dans les dictionnaires Dh et Dl
-  // (pour l'instant: sur chaque pixel, le patch sélectionné sera le plus proche)
-
+  
+  
+  
+  
+  
+  
+  
+  // pour l'instant, récupération de toutes les cartes:
+  
+  
+  // resize factor
+  int n=2;
+  
+  // Low resolution image
+  vpImage<vpRGBa> I_LR;
+  vpImageIo::read(I_LR,"../data/img/lion.jpg") ;
+  int h=I_LR.getHeight(), w=I_LR.getWidth();
+  
+  // High Resolution Image
+  vpImage<vpRGBa> I_HR(h*n,w*n,0);
+  
+  // Resize
+  bicubicresize(I_LR, I_HR);
+  
+  // VGG16
+  
+  // copy maps into dictionaries
+  completeDico(Dl, Dh);
+  
 }
 /////////////////////////////////////////////////
 //////////////Reconstrution Thibault
@@ -363,6 +398,7 @@ static void
 DicoVectorSelection(/*Dico de Basse Res,*/
 	vpImage<double> &resY, vpImage<double> &resCb, vpImage<double> &resCr) {
 	//caster l'élément du dio en double
+
 }
 
 
@@ -391,38 +427,6 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 
 int main()
 {
-  int h=319, w=480;
-  int n=2;
-  vpImage<vpRGBa> I_LR(h,w,0);
-  vpImage<vpRGBa> I_HR(h*n,w*n,0);
 
-  vector<unsigned char> dico[256];
-
-  vpImage<unsigned char> Y_HR (h*n,w*n);
-  vpImage<unsigned char> Cb_HR(h*n,w*n);
-  vpImage<unsigned char> Cr_HR(h*n,w*n);
-
-  vpImage<unsigned char> Y_LR (h,w);
-  vpImage<unsigned char> Cb_LR(h,w);
-  vpImage<unsigned char> Cr_LR(h,w);
-
-  vpImageIo::read(I_LR,"../data/img/lion.jpg") ;
-
-	Reconstruction(I_LR,I_HR);
-/*
-  bicubicresize(I_LR, I_HR);
-  //upscale(I_LR, I_HR, n);
-
-  // convertion to YUV
-  RGBtoYUV(I_LR, Y_LR, Cb_LR, Cr_LR);
-
-  vpDisplayX d1(I_LR) ;
-  vpDisplayX d2(I_HR) ;
-  vpDisplay::display(I_LR) ;
-  vpDisplay::display(I_HR) ;
-  vpDisplay::flush(I_LR) ;
-  vpDisplay::flush(I_HR) ;
-  vpDisplay::getClick(I_LR) ;
-*/
   return 0;
 }
