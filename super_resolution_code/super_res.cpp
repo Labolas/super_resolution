@@ -454,16 +454,21 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 	int h = HR.getHeight();
 	int w = HR.getWidth();
 
-	vpImage<double> resY(h,w);
-	vpImage<double> resCb(h,w);
-	vpImage<double> resCr(h,w);
+	vpImage<double> featureY(h,w);
+	vpImage<double> featureCb(h,w);
+	vpImage<double> featureCr(h,w);
 
 	bicubicresize(LR, HR); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
 
-	Python_Features(HR,"Reconst_HR"); //On obtient des cartes de features
-  system("python CAV.py lion.jpg"); 	//On vgg16 le resultat de ça
+  RGBtoYUV_Double(HR,featureY, featureCb, featureCr);
 
-	PatchManager(HR,resY,resCb,resCr);
+	Python_Features(featureY,"Reconst_HR_Y"); //On obtient des cartes de features
+  Python_Features(featureCb,"Reconst_HR_Cb"); //On obtient des cartes de features
+  Python_Features(featureCr,"Reconst_HR_Cr"); //On obtient des cartes de features
+
+  //system("python CAV.py lion.jpg"); 	//On vgg16 le resultat de ça
+
+	//PatchManager(HR,resY,resCb,resCr);
 
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
 	//DicoVectorSelection(/*dico de LR,*/ resY, resCb,resCr);
