@@ -13,7 +13,7 @@ typedef vpRGBa vpYCbCr;
 #define BICUBIC     1
 #define BILINEAR    0
 
-void Python_Features(vpImage<vpRGBa> &I, const char* path);
+void Python_Features(vpImage<unsigned char> &I, const char* path);
 
 static void
 RGBtoYUV_Double(const vpImage<vpRGBa> &RGB, vpImage<double> &Y_D, vpImage<double> &Cb_D, vpImage<double> &Cr_D)
@@ -295,10 +295,10 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh, con
   string img_path= "../data/out/";
   string sLR = "lion_LR";
   string sHR = "lion_HR";
-  
+
   int conv2Length = 127;
-  
-  for(int i=0; i<conv2Length; i++)
+
+  for(int i=0; i<conv2Length; i++){}
 }
 
 static void
@@ -328,17 +328,17 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
   vpImage<vpRGBa> I_HR;
   vpImageIo::read(I_HR,"../data/img/lion.jpg") ;
   int h=I_HR.getHeight(), w=I_HR.getWidth();
-  
+
   vpImage<unsigned char> Y_HR(h,w);
   vpImage<unsigned char> Cb_HR(h,w);
   vpImage<unsigned char> Cr_HR(h,w);
-  
+
   vpImage<unsigned char> Y_LR(h,w);
   vpImage<unsigned char> Cb_LR(h,w);
   vpImage<unsigned char> Cr_LR(h,w);
 
   RGBtoYUV(I_HR, Y_HR, Cb_HR, Cr_HR);
-  
+
   // VGG16 on HR image
   Python_Features(Y_HR, "lion_Y_HR");
   Python_Features(Cb_HR, "lion_Cb_HR");
@@ -353,14 +353,14 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
   bicubicresize(I_LR, I_HRbis);
 
   RGBtoYUV(I_HRbis, Y_LR, Cb_LR, Cr_LR);
-  
+
   // VGG16 on LR image
-  
+
   Python_Features(Y_LR, "lion_Y_LR");
   Python_Features(Cb_LR, "lion_Cb_LR");
   Python_Features(Cr_LR, "lion_Cr_LR");
-  
-  
+
+
 
   // copy maps into dictionaries
   completeDico(Dl, Dh, h, w);
@@ -370,7 +370,7 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
 //////////////Reconstrution Thibault
 /////////////////////////////////////////////////
 void
-Python_Features(vpImage<vpRGBa> &I, const char* path) {
+Python_Features(vpImage<unsigned char> &I, const char* path) {
 	string imgPath = "../data/img/";
 	vpImageIo::write(I,imgPath+path+".jpg");
   char python[30];
@@ -454,13 +454,13 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 	int h = HR.getHeight();
 	int w = HR.getWidth();
 
-	vpImage<double> featureY(h,w);
-	vpImage<double> featureCb(h,w);
-	vpImage<double> featureCr(h,w);
+	vpImage<unsigned char> featureY(h,w);
+	vpImage<unsigned char> featureCb(h,w);
+	vpImage<unsigned char> featureCr(h,w);
 
 	bicubicresize(LR, HR); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
 
-  RGBtoYUV_Double(HR,featureY, featureCb, featureCr);
+  RGBtoYUV(HR,featureY, featureCb, featureCr);
 
 	Python_Features(featureY,"Reconst_HR_Y"); //On obtient des cartes de features
   Python_Features(featureCb,"Reconst_HR_Cb"); //On obtient des cartes de features
