@@ -48,11 +48,11 @@ def load_model(model_name, image_shape, include_top=True):
     return model
 
 
-def show_layers(model):
+#def show_layers(model):
     # Show all layers of model
-    print("Layers :")
-    for layer in model.layers:
-        print("  %s\t--> %s" % (layer.name, layer.output.shape))
+    #print("Layers :")
+    #for layer in model.layers:
+        #print("  %s\t--> %s" % (layer.name, layer.output.shape))
 
 
 #Fichier qui permet de classifier une image et qui appelle le "fichier" ci-dessus
@@ -91,10 +91,10 @@ def load_image(image_name, image_shape=None):
 def predict(model, model_name, image):
     out = model.predict(image)
 
-    print("Model : %s" % model_name)
-    print("Class : %s" % np.argmax(out))
-    print("Probability : %s" % out[0][np.argmax(out)])
-    show_layers(model)
+    #print("Model : %s" % model_name)
+    #print("Class : %s" % np.argmax(out))
+    #print("Probability : %s" % out[0][np.argmax(out)])
+    #show_layers(model)
 
 
 def extract_features(model, output_folder, image, n):
@@ -105,21 +105,21 @@ def extract_features(model, output_folder, image, n):
     functor = K.function([inp]+[K.learning_phase()], outputs )  # evaluation function
     # Forward the network
     layer_outs = functor([image, 1.])
-    print(len(layer_outs))
+    #print(len(layer_outs))
     import os
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
-    print(output_folder)
+    #print(output_folder)
 
     for i,features in enumerate(layer_outs[4:6]): #select 2 last layers
         layer_output_folder = output_folder+"conv2/"
         if not os.path.exists(layer_output_folder):
             os.makedirs(layer_output_folder)
-        print(layer_output_folder)
+        #print(layer_output_folder)
         try:
             #for features in layer:
             features = features[0] # take the first image
-            print(features.shape)
+            #print(features.shape)
             f_range = range(0, features.shape[2])
             if features.shape[2] == 3:
                 for j in f_range: #iterate on the features of the layer
@@ -128,7 +128,7 @@ def extract_features(model, output_folder, image, n):
                     image[:,:,1] += 116.779
                     image[:,:,2] += 123.68
                     image = image.astype(np.int)
-                    print(layer_output_folder+"%s_%s%s.png" % (n,model.layers[i].name,j))
+                    #print(layer_output_folder+"%s_%s%s.png" % (n,model.layers[i].name,j))
                     cv2.imwrite(layer_output_folder+"%s_%s.png" % (model.layers[i].name,j), image)
             else:
                 #nbCanaux = len(features[0,0])
@@ -141,12 +141,12 @@ def extract_features(model, output_folder, image, n):
                     if True or np.max(image) != 0: # if empty, drop feature
                         ma, mi = max(np.max(image), ma), min(np.min(image), mi)
                         #np.savetxt(layer_output_folder+"%s_%s_%s.csv" % (i+1, model.layers[i].name,j), image)
-                        save_feature(layer_output_folder+"%s_%s_%s.png" % (i+1, "conv2-vgg16",j), image)
+                        save_feature(layer_output_folder+"%s_%s_%s.png" % (i+1, "conv2",j), image)
                         #image[:,:] *= 255.0 / max(np.max(image),1)  # change dynamic to [0,255]
                         #image = image.astype(np.int)
                         #print(layer_output_folder+"%s_%s_%s.png" % (i+1, model.layers[i].name,j))
                         #cv2.imwrite(layer_output_folder+"%s_%s_%s.png" % (i+1, model.layers[i].name,j), image)
-                print(ma, mi)
+                #print(ma, mi)
                 #i+=1
         except IndexError as e:
             # Occurs when layer isn't an image (fully connected layers...)
@@ -180,7 +180,7 @@ def main():
     for (dir_path, dir_names, _) in walk(output_folder):
         folders.extend(dir_names)
         break
-    print(len(folders),"features folders found")
+    #print(len(folders),"features folders found")
     f = []
     #for (dir_path, dir_names, files_names) in walk(images_folder_path):
         #for f_n in files_names:
@@ -205,7 +205,7 @@ def main():
 
     #load the model
     model = load_model(model_name, images[0].shape[1:4], False)
-    print("model loaded")
+    #print("model loaded")
 
     #extract the features and save them
     from os import path
@@ -214,7 +214,7 @@ def main():
         #image_name = path.splitext(files_names[i])[0] #remove the extension
         image_name = path.splitext(NomImage)[0] #remove the extension
         extract_features(model, output_folder+image_name+"/", image, 0)
-    print("features extracted")
+    #print("features extracted")
 
 
 if __name__ == "__main__":
