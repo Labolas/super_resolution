@@ -290,13 +290,13 @@ upscale_bilinearInterpol(const vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR, const u
 #endif
 
 static void
-completeDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh, const int & h, const int & w)
+completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh, const int & h, const int & w)
 {
    string img_path= "../data/out/";
 }
 
 static void
-createDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh)
+createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
 {
   vpImage<vpYCbCr> cartesLR, cartesHR;
 
@@ -325,7 +325,7 @@ createDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh)
 
   // VGG16 on HR image
   Python_Features(I_HR, "lion_HR");
-  
+
   // Low Resolution Image
   vpImage<vpRGBa> I_LR(h/n,w/n,0);
   vpImage<vpRGBa> I_HRbis(h,w,0);
@@ -333,10 +333,10 @@ createDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh)
   // Resize
   bicubicresize(I_HR, I_LR);
   bicubicresize(I_LR, I_HRbis);
-  
+
   // VGG16 on LR image
-  Python_Features(I_LR, "lion_LR");
-  
+  Python_Features(I_HRbis, "lion_LR");
+
   // copy maps into dictionaries
   completeDico(Dl, Dh, h, w);
 
@@ -354,7 +354,7 @@ Python_Features(vpImage<vpRGBa> &I, const char* path) {
 }
 
 static void
-PatchManager(vpImage<vpRGBa> &HR,
+CalculMoyenneDesPatchs(vpImage<vpRGBa> &HR,
 	vpImage<double> &resY, vpImage<double> &resCb,vpImage<double> &resCr) {
 
 	int h_HR = HR.getHeight();
@@ -438,7 +438,7 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 	Python_Features(HR,"Reconst_HR"); //On obtient des cartes de features
   system("python CAV.py lion.jpg"); 	//On vgg16 le resultat de ça
 
-	//PatchManager(HR,resY,resCb,resCr);
+	//CalculMoyenneDesPatchs(HR,resY,resCb,resCr);
 
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
 	//DicoVectorSelection(/*dico de LR,*/ resY, resCb,resCr);
@@ -449,32 +449,16 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 
 int main()
 {
-  // resize factor
-  int n=2;
 
-  // Low resolution image
+  vector<vpImage<vpYCbCr> > dicoLR;
+  vector<vpImage<vpYCbCr> > dicoHR;
+  createDico(dicoLR,dicoHR);
+
   vpImage<vpRGBa> I_LR;
-  vpImageIo::read(I_LR,"../data/img/lion.jpg") ;
+  vpImageIo::read(I_LR,"../data/img/lionReconst_LR.jpg") ;
   int h=I_LR.getHeight(), w=I_LR.getWidth();
-
-  // High Resolution Image
-  vpImage<vpRGBa> I_HR(h*n,w*n,0);
+  vpImage<vpRGBa> I_HR(h*2,w*2);
 
   Reconstruction(I_LR,I_HR);
-  
-  // Resize
-  bicubicresize(I_LR, I_HR);
-
-  vpDisplayX d1(I_LR,100,100) ;
-  vpDisplayX d2(I_HR,100,100) ;
-  vpDisplay::setTitle(I_LR, "original image");
-  vpDisplay::setTitle(I_HR, "original image");
-  vpDisplay::display(I_LR);
-  vpDisplay::display(I_HR);
-  vpDisplay::flush(I_LR) ;
-  vpDisplay::flush(I_HR) ;
-  vpDisplay::getClick(I_HR) ;
-
-
   return 0;
 }
