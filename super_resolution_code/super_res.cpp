@@ -355,11 +355,13 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
   RGBtoYUV(I_HRbis, Y_LR, Cb_LR, Cr_LR);
   
   // VGG16 on LR image
+  
   Python_Features(Y_LR, "lion_Y_LR");
   Python_Features(Cb_LR, "lion_Cb_LR");
   Python_Features(Cr_LR, "lion_Cr_LR");
   
   
+
   // copy maps into dictionaries
   completeDico(Dl, Dh, h, w);
 
@@ -377,7 +379,7 @@ Python_Features(vpImage<vpRGBa> &I, const char* path) {
 }
 
 static void
-CalculMoyenneDesPatchs(vpImage<vpRGBa> &HR,
+PatchManager(vpImage<vpRGBa> &HR,
 	vpImage<double> &resY, vpImage<double> &resCb,vpImage<double> &resCr) {
 
 	int h_HR = HR.getHeight();
@@ -461,7 +463,7 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 	Python_Features(HR,"Reconst_HR"); //On obtient des cartes de features
   system("python CAV.py lion.jpg"); 	//On vgg16 le resultat de ça
 
-	//CalculMoyenneDesPatchs(HR,resY,resCb,resCr);
+	PatchManager(HR,resY,resCb,resCr);
 
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
 	//DicoVectorSelection(/*dico de LR,*/ resY, resCb,resCr);
@@ -472,7 +474,7 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 
 int main()
 {
-  
+
   // resize factor
   int n=2;
 
