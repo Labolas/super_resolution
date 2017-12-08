@@ -322,12 +322,13 @@ createDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh)
   int h=I_LR.getHeight(), w=I_LR.getWidth();
 
   // High Resolution Image
-  vpImage<vpRGBa> I_HR(h*n,w*n,0);
+  vpImage<vpRGBa> I_HR(h/n,w/n,0);
 
   // Resize
   bicubicresize(I_LR, I_HR);
   
   // VGG16 on I_HR
+  
   
   // copy maps into dictionaries
   completeDico(Dl, Dh, h, w);
