@@ -13,6 +13,8 @@ typedef vpRGBa vpYCbCr;
 #define BICUBIC     1
 #define BILINEAR    0
 
+void Python_Features(vpImage<vpRGBa> &I, const char* path);
+
 static void
 RGBtoYUV_Double(const vpImage<vpRGBa> &RGB, vpImage<double> &Y_D, vpImage<double> &Cb_D, vpImage<double> &Cr_D)
 {
@@ -317,17 +319,23 @@ createDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh)
   int n=2;
 
   // Low resolution image
-  vpImage<vpRGBa> I_LR;
-  vpImageIo::read(I_LR,"../data/img/lion.jpg") ;
-  int h=I_LR.getHeight(), w=I_LR.getWidth();
+  vpImage<vpRGBa> I_HR;
+  vpImageIo::read(I_HR,"../data/img/lion.jpg") ;
+  int h=I_HR.getHeight(), w=I_HR.getWidth();
 
-  // High Resolution Image
-  vpImage<vpRGBa> I_HR(h/n,w/n,0);
+  // VGG16 on HR image
+  Python_Features(I_HR, "lion_HR");
+  
+  // Low Resolution Image
+  vpImage<vpRGBa> I_LR(h/n,w/n,0);
+  vpImage<vpRGBa> I_HRbis(h,w,0);
 
   // Resize
-  bicubicresize(I_LR, I_HR);
-
-  // VGG16 on I_HR
+  bicubicresize(I_HR, I_LR);
+  bicubicresize(I_LR, I_HRbis);
+  
+  // VGG16 on LR image
+  Python_Features(I_LR, "lion_LR");
   
   // copy maps into dictionaries
   completeDico(Dl, Dh, h, w);
@@ -336,7 +344,7 @@ createDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh)
 /////////////////////////////////////////////////
 //////////////Reconstrution Thibault
 /////////////////////////////////////////////////
-static void
+void
 Python_Features(vpImage<vpRGBa> &I, const char* path) {
 	string imgPath = "../data/img/";
 	vpImageIo::write(I,imgPath+path+".jpg");
@@ -441,11 +449,6 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 
 int main()
 {
-  int h = 319; int w = 480;
-  vpImage<vpRGBa> LR(h,w); vpImage<vpRGBa> HR(h*2,w*2);
-  vpImageIo::read(LR,"../data/img/lion.jpg") ;
-  Reconstruction(LR,HR);
-
   // resize factor
   int n=2;
 
@@ -457,6 +460,8 @@ int main()
   // High Resolution Image
   vpImage<vpRGBa> I_HR(h*n,w*n,0);
 
+  Reconstruction(I_LR,I_HR);
+  
   // Resize
   bicubicresize(I_LR, I_HR);
 
