@@ -297,33 +297,33 @@ static void
 createDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh)
 {
   vpImage<vpYCbCr> cartesLR, cartesHR;
-  
+
   // dans une dizaine d'images, passage VGG16
 
   // récupérations de cartes intéressantes (conv2-1, conv2-2)
-  
+
   // ajout de chaque carte sélectionnée dans les dictionnaires Dh et Dl
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
   // pour l'instant, récupération de toutes les cartes:
-  
-  
+
+
   // resize factor
   int n=2;
-  
+
   // Low resolution image
   vpImage<vpRGBa> I_LR;
   vpImageIo::read(I_LR,"../data/img/lion.jpg") ;
   int h=I_LR.getHeight(), w=I_LR.getWidth();
-  
+
   // High Resolution Image
   vpImage<vpRGBa> I_HR(h*n,w*n,0);
-  
+
   // Resize
   bicubicresize(I_LR, I_HR);
   
@@ -395,10 +395,21 @@ PatchManager(vpImage<vpRGBa> &HR,
 }
 
 static void
-DicoVectorSelection(/*Dico de Basse Res,*/
+DicoVectorSelection(/*const vector<vpImage<vpYCbCr> > dicoLR,*/
 	vpImage<double> &resY, vpImage<double> &resCb, vpImage<double> &resCr) {
 	//caster l'élément du dio en double
+	//int h = dicoLR[0].getHeight();
+	//int w = dicoLR[0].getWidth();
 
+	//vpImage<double> mapY(h,w); 	vpImage<double> mapCb(h,w); 	vpImage<double> mapCr(h,w);
+
+	/*int size = dicoLR.size();
+	for (int i = 0; i< size ; i++)
+	{
+		vpYCbCr_to_double(dicoLR[i], mapY, mapCb, mapCr);
+		//correlation entre Y, Cb, Cr du dico et de l'image de base
+	}
+	*/
 }
 
 
