@@ -338,10 +338,12 @@ createDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh)
 //////////////Reconstrution Thibault
 /////////////////////////////////////////////////
 static void
-Python_Features(vpImage<vpRGBa> &HR) {
+Python_Features(vpImage<vpRGBa> &HR, const char* path) {
 	string imgPath = "../data/img/";
-	vpImageIo::write(HR,imgPath+"Reconst_HR.jpg");
-	system("python CAV.py Reconst_HR.jpg"); 	//On vgg16 le resultat de ça
+	vpImageIo::write(HR,imgPath+path+".jpg");
+  char python[30];
+  sprintf(python,"python CAV.py %s.jpg",path)  ;
+	system(python); 	//On vgg16 le resultat de ça
 }
 
 static void
@@ -398,7 +400,7 @@ PatchManager(vpImage<vpRGBa> &HR,
 static void
 DicoVectorSelection(/*const vector<vpImage<vpYCbCr> > dicoLR,*/
 	vpImage<double> &resY, vpImage<double> &resCb, vpImage<double> &resCr) {
-	//caster l'élément du dio en double
+	//caster l'élément du dico en double
 	//int h = dicoLR[0].getHeight();
 	//int w = dicoLR[0].getWidth();
 
@@ -426,12 +428,13 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 
 	bicubicresize(LR, HR); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
 
-	Python_Features(HR); //On obtient des cartes de features
+	Python_Features(HR,"Reconst_HR"); //On obtient des cartes de features
+  system("python CAV.py lion.jpg"); 	//On vgg16 le resultat de ça
 
-	PatchManager(HR,resY,resCb,resCr);
+	//PatchManager(HR,resY,resCb,resCr);
 
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
-	DicoVectorSelection(/*dico de LR,*/ resY, resCb,resCr);
+	//DicoVectorSelection(/*dico de LR,*/ resY, resCb,resCr);
 
 	//garder le coef de correlation
 
@@ -439,6 +442,10 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 
 int main()
 {
+  int h = 319; int w = 480;
+  vpImage<vpRGBa> LR(h,w); vpImage<vpRGBa> HR(h*2,w*2);
+  vpImageIo::read(LR,"../data/img/lion.jpg") ;
+  Reconstruction(LR,HR);
 
   // resize factor
   int n=2;
