@@ -91,7 +91,7 @@ getpixelB(const vpImage<vpRGBa>& in, unsigned int y, unsigned int x)
 static void
 bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
 {
-  int h=in.getHeight(), w=in.getHeight();
+  int h=in.getHeight(), w=in.getWidth();
   int out_h=out.getHeight(), out_w=out.getWidth();
 
   const double tx = double(w) / out_w;
@@ -288,9 +288,9 @@ upscale_bilinearInterpol(const vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR, const u
 #endif
 
 static void
-completeDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh)
+completeDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh, const int & h, const int & w)
 {
-   
+   string img_path= "../data/out/";
 }
 
 static void
@@ -327,10 +327,10 @@ createDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh)
   // Resize
   bicubicresize(I_LR, I_HR);
   
-  // VGG16
+  // VGG16 on I_HR
   
   // copy maps into dictionaries
-  completeDico(Dl, Dh);
+  completeDico(Dl, Dh, h, w);
   
 }
 /////////////////////////////////////////////////
@@ -428,5 +428,30 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 int main()
 {
 
+  // resize factor
+  int n=2;
+  
+  // Low resolution image
+  vpImage<vpRGBa> I_LR;
+  vpImageIo::read(I_LR,"../data/img/lion.jpg") ;
+  int h=I_LR.getHeight(), w=I_LR.getWidth();
+  
+  // High Resolution Image
+  vpImage<vpRGBa> I_HR(h*n,w*n,0);
+  
+  // Resize
+  bicubicresize(I_LR, I_HR);
+  
+  vpDisplayX d1(I_LR,100,100) ;
+  vpDisplayX d2(I_HR,100,100) ;
+  vpDisplay::setTitle(I_LR, "original image");
+  vpDisplay::setTitle(I_HR, "original image");
+  vpDisplay::display(I_LR);
+  vpDisplay::display(I_HR);
+  vpDisplay::flush(I_LR) ;
+  vpDisplay::flush(I_HR) ;	 
+  vpDisplay::getClick(I_HR) ;
+  
+  
   return 0;
 }
