@@ -290,13 +290,13 @@ upscale_bilinearInterpol(const vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR, const u
 #endif
 
 static void
-completeDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh, const int & h, const int & w)
+completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh, const int & h, const int & w)
 {
    string img_path= "../data/out/";
 }
 
 static void
-createDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh)
+createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
 {
   vpImage<vpYCbCr> cartesLR, cartesHR;
 
@@ -335,7 +335,7 @@ createDico(vector<vpImage<vpYCbCr> > * Dl, vector<vpImage<vpYCbCr> > * Dh)
   bicubicresize(I_LR, I_HRbis);
   
   // VGG16 on LR image
-  Python_Features(I_LR, "lion_LR");
+  Python_Features(I_HRbis, "lion_LR");
   
   // copy maps into dictionaries
   completeDico(Dl, Dh, h, w);
@@ -449,6 +449,7 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 
 int main()
 {
+  
   // resize factor
   int n=2;
 
