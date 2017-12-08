@@ -292,7 +292,13 @@ upscale_bilinearInterpol(const vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR, const u
 static void
 completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh, const int & h, const int & w)
 {
-   string img_path= "../data/out/";
+  string img_path= "../data/out/";
+  string sLR = "lion_LR";
+  string sHR = "lion_HR";
+  
+  int conv2Length = 127;
+  
+  for(int i=0; i<conv2Length; i++)
 }
 
 static void
@@ -322,9 +328,21 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
   vpImage<vpRGBa> I_HR;
   vpImageIo::read(I_HR,"../data/img/lion.jpg") ;
   int h=I_HR.getHeight(), w=I_HR.getWidth();
+  
+  vpImage<unsigned char> Y_HR(h,w);
+  vpImage<unsigned char> Cb_HR(h,w);
+  vpImage<unsigned char> Cr_HR(h,w);
+  
+  vpImage<unsigned char> Y_LR(h,w);
+  vpImage<unsigned char> Cb_LR(h,w);
+  vpImage<unsigned char> Cr_LR(h,w);
 
+  RGBtoYUV(I_HR, Y_HR, Cb_HR, Cr_HR);
+  
   // VGG16 on HR image
-  Python_Features(I_HR, "lion_HR");
+  Python_Features(Y_HR, "lion_Y_HR");
+  Python_Features(Cb_HR, "lion_Cb_HR");
+  Python_Features(Cr_HR, "lion_Cr_HR");
 
   // Low Resolution Image
   vpImage<vpRGBa> I_LR(h/n,w/n,0);
@@ -334,8 +352,12 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
   bicubicresize(I_HR, I_LR);
   bicubicresize(I_LR, I_HRbis);
 
+  RGBtoYUV(I_HRbis, Y_LR, Cb_LR, Cr_LR);
+  
   // VGG16 on LR image
-  Python_Features(I_HRbis, "lion_LR");
+  Python_Features(Y_LR, "lion_Y_LR");
+  Python_Features(Cb_LR, "lion_Cb_LR");
+  Python_Features(Cr_LR, "lion_Cr_LR");
   
   
   // copy maps into dictionaries
