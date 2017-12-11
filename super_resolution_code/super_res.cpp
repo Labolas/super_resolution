@@ -293,25 +293,14 @@ static void
 completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
 {
   string img_path= "../data/out/";
-<<<<<<< Updated upstream
-  
+
   string sY_LR = "lion_Y_LR/conv2/";
   string sCb_LR = "lion_Cb_LR/conv2/";
   string sCr_LR = "lion_Cr_LR/conv2/";
-  
+
   string sY_HR = "lion_Y_HR/conv2/";
   string sCb_HR = "lion_Cb_HR/conv2/";
   string sCr_HR = "lion_Cr_HR/conv2/";
-=======
-
-  string sY_LR = "lion_Y_LR/";
-  string sCb_LR = "lion_Cb_LR/";
-  string sCr_LR = "lion_Cr_LR/";
-
-  string sY_HR = "lion_Y_HR/";
-  string sCb_HR = "lion_Cb_HR/";
-  string sCr_HR = "lion_Cr_HR/";
->>>>>>> Stashed changes
 
   int conv2Length = 127;
 
@@ -323,182 +312,158 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
     {
       char img_endPath[40];
       sprintf(img_endPath, "%d_conv2_%d.png", a, i);
-      
+
       string path = img_path + sY_LR + img_endPath;
 
       vpImage<unsigned char> I;
       vpImageIo::read(I,path) ;
 
       int h=I.getHeight(), w=I.getWidth();
-      
-      
+
+
       Dl[i] = vpImage<vpYCbCr>(h,w);
-      
+
       for(int y=0; y<h; y++)
       {
         for(int x=0; x<w; x++)
         {
-<<<<<<< Updated upstream
-          ((Dl[i])[y][x]).R=I[y][x]; 
-=======
-          ((Dl[i])[y][x]).R=I[h][x];
->>>>>>> Stashed changes
+          ((Dl[i])[y][x]).R=I[y][x];
         }
       }
     }
 
-    
+
     // Cb LR
     for(int i=0; i<conv2Length; i++)
     {
       char img_endPath[40];
       sprintf(img_endPath, "%d_conv2_%d.png", a, i);
-      
+
       string path = img_path + sCb_LR + img_endPath;
 
       vpImage<unsigned char> I;
       vpImageIo::read(I,path) ;
 
       int h=I.getHeight(), w=I.getWidth();
-      
-      
+
+
       Dl[i] = vpImage<vpYCbCr>(h,w);
-      
+
       for(int y=0; y<h; y++)
       {
         for(int x=0; x<w; x++)
         {
-<<<<<<< Updated upstream
-          ((Dl[i])[y][x]).G=I[y][x]; 
-=======
-          ((Dl[i])[y][x]).G=I[h][x];
->>>>>>> Stashed changes
+          ((Dl[i])[y][x]).G=I[y][x];
         }
       }
     }
-    
+
     // Cr LR
     for(int i=0; i<conv2Length; i++)
     {
       char img_endPath[40];
       sprintf(img_endPath, "%d_conv2_%d.png", a, i);
-      
+
       string path = img_path + sCr_LR + img_endPath;
 
       vpImage<unsigned char> I;
       vpImageIo::read(I,path) ;
 
       int h=I.getHeight(), w=I.getWidth();
-      
-      
+
+
       Dl[i] = vpImage<vpYCbCr>(h,w);
-      
+
       for(int y=0; y<h; y++)
       {
         for(int x=0; x<w; x++)
         {
-<<<<<<< Updated upstream
-          ((Dl[i])[y][x]).B=I[y][x]; 
-=======
-          ((Dl[i])[y][x]).B=I[h][x];
->>>>>>> Stashed changes
+          ((Dl[i])[y][x]).B=I[y][x];
         }
       }
     }
-    
-    
+
+
     // Y HR
     for(int i=0; i<conv2Length; i++)
     {
       char img_endPath[40];
       sprintf(img_endPath, "%d_conv2_%d.png", a, i);
-      
+
       string path = img_path + sY_HR + img_endPath;
 
       vpImage<unsigned char> I;
       vpImageIo::read(I,path) ;
 
       int h=I.getHeight(), w=I.getWidth();
-      
-      
+
+
       Dl[i] = vpImage<vpYCbCr>(h,w);
-      
+
       for(int y=0; y<h; y++)
       {
         for(int x=0; x<w; x++)
         {
-<<<<<<< Updated upstream
-          ((Dl[i])[y][x]).R=I[y][x]; 
-=======
-          ((Dl[i])[y][x]).R=I[h][x];
->>>>>>> Stashed changes
+          ((Dl[i])[y][x]).R=I[y][x];
         }
       }
     }
-    
-    
+
+
     // Cb HR
     for(int i=0; i<conv2Length; i++)
     {
       char img_endPath[40];
       sprintf(img_endPath, "%d_conv2_%d.png", a, i);
-      
+
       string path = img_path + sCb_HR + img_endPath;
 
       vpImage<unsigned char> I;
       vpImageIo::read(I,path) ;
 
       int h=I.getHeight(), w=I.getWidth();
-      
-      
+
+
       Dl[i] = vpImage<vpYCbCr>(h,w);
-      
+
       for(int y=0; y<h; y++)
       {
         for(int x=0; x<w; x++)
         {
-<<<<<<< Updated upstream
-          ((Dl[i])[y][x]).G=I[y][x]; 
-=======
-          ((Dl[i])[y][x]).G=I[h][x];
->>>>>>> Stashed changes
+          ((Dl[i])[y][x]).G=I[y][x];
         }
       }
     }
-    
-    
-    
+
+
+
     // Cr HR
     for(int i=0; i<conv2Length; i++)
     {
       char img_endPath[40];
       sprintf(img_endPath, "%d_conv2_%d.png", a, i);
-      
+
       string path = img_path + sCr_HR + img_endPath;
 
       vpImage<unsigned char> I;
       vpImageIo::read(I,path) ;
 
       int h=I.getHeight(), w=I.getWidth();
-      
-      
+
+
       Dl[i] = vpImage<vpYCbCr>(h,w);
-      
+
       for(int y=0; y<h; y++)
       {
         for(int x=0; x<w; x++)
         {
-<<<<<<< Updated upstream
-          ((Dl[i])[y][x]).B=I[y][x]; 
-=======
-          ((Dl[i])[y][x]).B=I[h][x];
->>>>>>> Stashed changes
+          ((Dl[i])[y][x]).B=I[y][x];
         }
       }
     }
-    
+
   }
-  
+
 }
 
 static void
@@ -630,27 +595,36 @@ PatchManager(vpImage<vpRGBa> &HR,
 }
 
 static void
-DicoVectorSelection(  vector<vpImage<vpYCbCr> > dicoLR,  vector<vpImage<vpYCbCr> > dicoHR,
+DicoVectorSelection(vector<vpImage<vpYCbCr> > dicoLR, vector<vpImage<vpYCbCr> > dicoHR,
 	vpImage<double> &resY, vpImage<double> &resCb, vpImage<double> &resCr) {
-	//caster l'élément du dico en double
-	//int h = dicoLR[0].getHeight();
-	//int w = dicoLR[0].getWidth();
 
-	//vpImage<double> mapY(h,w); 	vpImage<double> mapCb(h,w); 	vpImage<double> mapCr(h,w);
+  int h = dicoLR[0].getHeight(), w = dicoLR[0].getWidth();
+  vpImage<vpYCbCr> elementDico(h,w);
 
-	/*int size = dicoLR.size();
-	for (int i = 0; i< size ; i++)
-	{
-		vpYCbCr_to_double(dicoLR[i], mapY, mapCb, mapCr);
-		//correlation entre Y, Cb, Cr du dico et de l'image de base
-	}
-	*/
+  for (int s = 0, s<256 ; s++)
+  {
+    for(int i = 0 ; i<h_HR; i++)
+    {
+      for (int j = 0; j<w_HR; j++)
+      {
+        for(int ii = -4 ; ii<5; ii++)
+        {
+          for (int jj = -4; jj<5; jj++)
+          {
+            if(ii+i >= 0 && ii+i < h_HR && jj+j >= 0 && jj+j < w_HR)
+            {
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 
 static void
 Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR,
-  vector<vpImage<vpYCbCr> > dicoLR,  vector<vpImage<vpYCbCr> > dicoHR)
+  vector<vpImage<vpYCbCr> > dicoLR,vector<vpImage<vpYCbCr> > dicoHR)
 {
 	int h = HR.getHeight();
 	int w = HR.getWidth();
@@ -663,16 +637,16 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR,
 
   RGBtoYUV(HR,featureY, featureCb, featureCr);
 
-	Python_Features(featureY,"Reconst_HR_Y"); //On obtient des cartes de features
-  Python_Features(featureCb,"Reconst_HR_Cb"); //On obtient des cartes de features
-  Python_Features(featureCr,"Reconst_HR_Cr"); //On obtient des cartes de features
+	//Python_Features(featureY,"Reconst_HR_Y"); //On obtient des cartes de features
+  //Python_Features(featureCb,"Reconst_HR_Cb"); //On obtient des cartes de features
+  //Python_Features(featureCr,"Reconst_HR_Cr"); //On obtient des cartes de features
 
   //system("python CAV.py lion.jpg"); 	//On vgg16 le resultat de ça
 
 	PatchManager(HR,featureY,featureCb,featureCr);
 
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
-	//DicoVectorSelection(dicoLR,dicoHR, resY, resCb,resCr);
+	DicoVectorSelection(/dicoLR,dicoHR, resY, resCb,resCr);
 
 	//garder le coef de correlation
 
@@ -684,25 +658,15 @@ int main()
   // resize factor
   int n=2;
 
-<<<<<<< HEAD
-  vector<vpImage<vpYCbCr> > dicoLR;
-  vector<vpImage<vpYCbCr> > dicoHR;
-  //createDico(dicoLR,dicoHR);
-=======
   vector<vpImage<vpYCbCr> > dicoLR(256);
   vector<vpImage<vpYCbCr> > dicoHR(256);
   createDico(dicoLR,dicoHR);
->>>>>>> d5ce9d99e1796e25d9196078117df9ed41489cd4
 
   vpImage<vpRGBa> I_LR;
   vpImageIo::read(I_LR,"../data/img/lionReconst_LR.jpg") ;
   int h=I_LR.getHeight(), w=I_LR.getWidth();
   vpImage<vpRGBa> I_HR(h*2,w*2);
 
-<<<<<<< Updated upstream
-  //Reconstruction(I_LR,I_HR);
-=======
-  Reconstruction(I_LR,I_HR, dicoLR, dicoHR);
->>>>>>> Stashed changes
+  Reconstruction(I_LR,I_HR,dicoLR,dicoHR);
   return 0;
 }
