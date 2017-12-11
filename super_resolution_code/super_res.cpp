@@ -413,11 +413,11 @@ PatchManager(vpImage<vpRGBa> &HR,
 			double moyPatchCb = sumCb / compteur;
 			double moyPatchCr = sumCr / compteur;
 
-			for(int iii = -4 ; iii<5 ; iii++)
+      for(int ii = -4 ; ii<5; ii++)
 			{
-				for (int jjj = -4 ; jjj<5; jjj++)
+				for (int jj = -4; jj<5; jj++)
 				{
-					if(iii+i >= 0 || iii+i < h_HR || jjj+j >= 0 || jjj+j < w_HR)
+					if(ii+i >= 0 || ii+i < h_HR || jj+j >= 0 || jj+j < w_HR)
 					{
 						resY[i+iii][j+jjj] 	= hrY[i+iii][j+jjj]  - moyPatchY;
 						resCb[i+iii][j+jjj] = hrCb[i+iii][j+jjj] - moyPatchCb;
@@ -485,7 +485,7 @@ int main()
 
   vector<vpImage<vpYCbCr> > dicoLR;
   vector<vpImage<vpYCbCr> > dicoHR;
-  createDico(dicoLR,dicoHR);
+  //createDico(dicoLR,dicoHR);
 
   vpImage<vpRGBa> I_LR;
   vpImageIo::read(I_LR,"../data/img/lionReconst_LR.jpg") ;
