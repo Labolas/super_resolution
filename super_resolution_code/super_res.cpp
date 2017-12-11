@@ -664,8 +664,8 @@ DicoVectorSelection(vector<vpImage<vpYCbCr> > dicoLR, vector<vpImage<vpYCbCr> > 
   int h = dicoLR[0].getHeight(), w = dicoLR[0].getWidth();
   vpImage<vpYCbCr> elementDico(h,w);
 
-  vpImage<unsigned char> Imoy(h,w);
-  vpImage<double> indexY = 0;
+  vpImage<unsigned char> Imoy(h,w,0);
+  vpImage<double> indexY(h,w,0);
   double meilleurValY = 0;
   double produitScalY = 0;
   vpImage<double> ecartType2(h,w);
@@ -684,7 +684,7 @@ DicoVectorSelection(vector<vpImage<vpYCbCr> > dicoLR, vector<vpImage<vpYCbCr> > 
             if(ii+i >= 0 && ii+i < h && jj+j >= 0 && jj+j < w)
             {
               CalculMoyennePatch(dicoLR[s], Imoy, ecartType2);
-              produitScalY  += (hrY - resY[i][j]) * (dicoLR[s][ii+i][jj+j].R -Imoy[i][j]);
+              produitScalY  += (hrY[ii+i][jj+j] - resY[i][j]) * (dicoLR[s][ii+i][jj+j].R -Imoy[i][j]);
               //produitScalCb += dicoLR[s][ii+i][jj+j].G * resCb[ii+i][jj+j];
               //produitScalCr += dicoLR[s][ii+i][jj+j].B * resCr[ii+i][jj+j];
             }
