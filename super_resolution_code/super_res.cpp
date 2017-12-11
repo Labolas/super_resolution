@@ -290,17 +290,17 @@ upscale_bilinearInterpol(const vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR, const u
 #endif
 
 static void
-completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh, const int & h, const int & w)
+completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
 {
   string img_path= "../data/out/";
   
-  string sY_LR = "lion_Y_LR/";
-  string sCb_LR = "lion_Cb_LR/";
-  string sCr_LR = "lion_Cr_LR/";
+  string sY_LR = "lion_Y_LR/conv2/";
+  string sCb_LR = "lion_Cb_LR/conv2/";
+  string sCr_LR = "lion_Cr_LR/conv2/";
   
-  string sY_HR = "lion_Y_HR/";
-  string sCb_HR = "lion_Cb_HR/";
-  string sCr_HR = "lion_Cr_HR/";
+  string sY_HR = "lion_Y_HR/conv2/";
+  string sCb_HR = "lion_Cb_HR/conv2/";
+  string sCr_HR = "lion_Cr_HR/conv2/";
 
   int conv2Length = 127;
 
@@ -310,117 +310,160 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh, con
     // Y LR
     for(int i=0; i<conv2Length; i++)
     {
-      string img_endPath = a+"_conv2-vgg16_" +i;
+      char img_endPath[40];
+      sprintf(img_endPath, "%d_conv2_%d.png", a, i);
+      
       string path = img_path + sY_LR + img_endPath;
 
       vpImage<unsigned char> I;
       vpImageIo::read(I,path) ;  
 
+      int h=I.getHeight(), w=I.getWidth();
+      
+      
+      Dl[i] = vpImage<vpYCbCr>(h,w);
+      
       for(int y=0; y<h; y++)
       {
         for(int x=0; x<w; x++)
         {
-          ((Dl[i])[y][x]).R=I[h][x]; 
+          ((Dl[i])[y][x]).R=I[y][x]; 
         }
       }
     }
 
-
+    
     // Cb LR
     for(int i=0; i<conv2Length; i++)
     {
-      string img_endPath = a+"_conv2-vgg16_" +i;
+      char img_endPath[40];
+      sprintf(img_endPath, "%d_conv2_%d.png", a, i);
+      
       string path = img_path + sCb_LR + img_endPath;
 
       vpImage<unsigned char> I;
       vpImageIo::read(I,path) ;  
 
+      int h=I.getHeight(), w=I.getWidth();
+      
+      
+      Dl[i] = vpImage<vpYCbCr>(h,w);
+      
       for(int y=0; y<h; y++)
       {
         for(int x=0; x<w; x++)
         {
-          ((Dl[i])[y][x]).G=I[h][x]; 
+          ((Dl[i])[y][x]).G=I[y][x]; 
         }
       }
     }
-
-
+    
     // Cr LR
     for(int i=0; i<conv2Length; i++)
     {
-      string img_endPath = a+"_conv2-vgg16_" +i;
+      char img_endPath[40];
+      sprintf(img_endPath, "%d_conv2_%d.png", a, i);
+      
       string path = img_path + sCr_LR + img_endPath;
 
       vpImage<unsigned char> I;
       vpImageIo::read(I,path) ;  
 
+      int h=I.getHeight(), w=I.getWidth();
+      
+      
+      Dl[i] = vpImage<vpYCbCr>(h,w);
+      
       for(int y=0; y<h; y++)
       {
         for(int x=0; x<w; x++)
         {
-          ((Dl[i])[y][x]).B=I[h][x]; 
+          ((Dl[i])[y][x]).B=I[y][x]; 
         }
       }
     }
-
-
-
+    
+    
     // Y HR
     for(int i=0; i<conv2Length; i++)
     {
-      string img_endPath = a+"conv2-vgg16_" +i;
+      char img_endPath[40];
+      sprintf(img_endPath, "%d_conv2_%d.png", a, i);
+      
       string path = img_path + sY_HR + img_endPath;
 
       vpImage<unsigned char> I;
       vpImageIo::read(I,path) ;  
 
+      int h=I.getHeight(), w=I.getWidth();
+      
+      
+      Dl[i] = vpImage<vpYCbCr>(h,w);
+      
       for(int y=0; y<h; y++)
       {
         for(int x=0; x<w; x++)
         {
-          ((Dl[i])[y][x]).R=I[h][x]; 
+          ((Dl[i])[y][x]).R=I[y][x]; 
         }
       }
     }
-
-
-    // Cb LR
+    
+    
+    // Cb HR
     for(int i=0; i<conv2Length; i++)
     {
-      string img_endPath = a+"_conv2-vgg16_" +i;
+      char img_endPath[40];
+      sprintf(img_endPath, "%d_conv2_%d.png", a, i);
+      
       string path = img_path + sCb_HR + img_endPath;
 
       vpImage<unsigned char> I;
       vpImageIo::read(I,path) ;  
 
+      int h=I.getHeight(), w=I.getWidth();
+      
+      
+      Dl[i] = vpImage<vpYCbCr>(h,w);
+      
       for(int y=0; y<h; y++)
       {
         for(int x=0; x<w; x++)
         {
-          ((Dl[i])[y][x]).G=I[h][x]; 
+          ((Dl[i])[y][x]).G=I[y][x]; 
         }
       }
     }
-
-
-    // Cr LR
+    
+    
+    
+    // Cr HR
     for(int i=0; i<conv2Length; i++)
     {
-      string img_endPath = a+"_conv2-vgg16_" +i;
+      char img_endPath[40];
+      sprintf(img_endPath, "%d_conv2_%d.png", a, i);
+      
       string path = img_path + sCr_HR + img_endPath;
 
       vpImage<unsigned char> I;
       vpImageIo::read(I,path) ;  
 
+      int h=I.getHeight(), w=I.getWidth();
+      
+      
+      Dl[i] = vpImage<vpYCbCr>(h,w);
+      
       for(int y=0; y<h; y++)
       {
         for(int x=0; x<w; x++)
         {
-          ((Dl[i])[y][x]).B=I[h][x]; 
+          ((Dl[i])[y][x]).B=I[y][x]; 
         }
       }
     }
+    
   }
+  
 }
 
 static void
@@ -462,9 +505,9 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
   RGBtoYUV(I_HR, Y_HR, Cb_HR, Cr_HR);
 
   // VGG16 on HR image
-  Python_Features(Y_HR, "lion_Y_HR");
-  Python_Features(Cb_HR, "lion_Cb_HR");
-  Python_Features(Cr_HR, "lion_Cr_HR");
+  //Python_Features(Y_HR, "lion_Y_HR");
+  //Python_Features(Cb_HR, "lion_Cb_HR");
+  //Python_Features(Cr_HR, "lion_Cr_HR");
 
   // Low Resolution Image
   vpImage<vpRGBa> I_LR(h/n,w/n,0);
@@ -478,12 +521,12 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
 
   // VGG16 on LR image
 
-  Python_Features(Y_LR, "lion_Y_LR");
-  Python_Features(Cb_LR, "lion_Cb_LR");
-  Python_Features(Cr_LR, "lion_Cr_LR");
+  //Python_Features(Y_LR, "lion_Y_LR");
+  //Python_Features(Cb_LR, "lion_Cb_LR");
+  //Python_Features(Cr_LR, "lion_Cr_LR");
 
   // copy maps into dictionaries
-  completeDico(Dl, Dh, h, w);
+  completeDico(Dl, Dh);
 
 }
 /////////////////////////////////////////////////
@@ -605,15 +648,21 @@ int main()
   // resize factor
   int n=2;
 
+<<<<<<< HEAD
   vector<vpImage<vpYCbCr> > dicoLR;
   vector<vpImage<vpYCbCr> > dicoHR;
   //createDico(dicoLR,dicoHR);
+=======
+  vector<vpImage<vpYCbCr> > dicoLR(256);
+  vector<vpImage<vpYCbCr> > dicoHR(256);
+  createDico(dicoLR,dicoHR);
+>>>>>>> d5ce9d99e1796e25d9196078117df9ed41489cd4
 
   vpImage<vpRGBa> I_LR;
   vpImageIo::read(I_LR,"../data/img/lionReconst_LR.jpg") ;
   int h=I_LR.getHeight(), w=I_LR.getWidth();
   vpImage<vpRGBa> I_HR(h*2,w*2);
 
-  Reconstruction(I_LR,I_HR);
+  //Reconstruction(I_LR,I_HR);
   return 0;
 }
