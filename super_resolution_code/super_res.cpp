@@ -569,6 +569,7 @@ static void CalculMoyennePatch(vpImage<vpYCbCr> &I, vpImage<unsigned char> &res,
 			}
 
 			double moyPatchY 	= sumY  / compteur;
+			res[i][j] =  moyPatchY;
 
       for(int ii = -4 ; ii<5; ii++)
 			{
@@ -576,7 +577,6 @@ static void CalculMoyennePatch(vpImage<vpYCbCr> &I, vpImage<unsigned char> &res,
 				{
 					if(ii+i >= 0 && ii+i < h_HR && jj+j >= 0 && jj+j < w_HR)
 					{
-						res[ii+i][jj+j] 	= I[ii+i][jj+j].R  - moyPatchY;
             variance += (I[ii+i][jj+j].R - moyPatchY) * (I[ii+i][jj+j].R - moyPatchY) ;
 					}
 				}
@@ -629,16 +629,17 @@ PatchManager(vpImage<vpRGBa> &HR, vpImage<double> & ecartType1,
 			double moyPatchCb = sumCb / compteur;
 			double moyPatchCr = sumCr / compteur;
 
+      resY[i][j] 	=  moyPatchY;
+      resCb[i][j] =  moyPatchCb;
+      resCr[i][j] =  moyPatchCr;
+
       for(int ii = -4 ; ii<5; ii++)
 			{
 				for (int jj = -4; jj<5; jj++)
 				{
 					if(ii+i >= 0 && ii+i < h_HR && jj+j >= 0 && jj+j < w_HR)
 					{
-						resY[ii+i][jj+j] 	= hrY[ii+i][jj+j]  - moyPatchY;
             variance += (hrY[ii+i][jj+j] - moyPatchY) * (hrY[ii+i][jj+j]- moyPatchY) ;
-						resCb[ii+i][jj+j] = hrCb[ii+i][jj+j] - moyPatchCb;
-						resCr[ii+i][jj+j] = hrCr[ii+i][jj+j] - moyPatchCr;
 					}
 				}
 			}
@@ -651,10 +652,18 @@ PatchManager(vpImage<vpRGBa> &HR, vpImage<double> & ecartType1,
 static void
 DicoVectorSelection(vector<vpImage<vpYCbCr> > dicoLR, vector<vpImage<vpYCbCr> > dicoHR,
 	vpImage<unsigned char> &resY, vpImage<unsigned char> &resCb, vpImage<unsigned char> &resCr,
-  vpImage<double> ecartType1) {
+  vpImage<double> ecartType1, vpImage<vpRGBa> &HR) {
+
+    int h_HR = HR.getHeight();
+    int w_HR = HR.getWidth();
+    vpImage<unsigned char> hrY(h_HR,w_HR);
+    vpImage<unsigned char> hrCb(h_HR,w_HR);
+    vpImage<unsigned char> hrCr(h_HR,w_HR);
+  	RGBtoYUV(HR,hrY,hrCb,hrCr);
 
   int h = dicoLR[0].getHeight(), w = dicoLR[0].getWidth();
   vpImage<vpYCbCr> elementDico(h,w);
+
   vpImage<unsigned char> Imoy(h,w);
   vpImage<double> indexY = 0;
   double meilleurValY = 0;
@@ -675,14 +684,12 @@ DicoVectorSelection(vector<vpImage<vpYCbCr> > dicoLR, vector<vpImage<vpYCbCr> > 
             if(ii+i >= 0 && ii+i < h && jj+j >= 0 && jj+j < w)
             {
               CalculMoyennePatch(dicoLR[s], Imoy, ecartType2);
-              produitScalY  += resY[ii+i][jj+j] * Imoy[ii+i][jj+j];
+              produitScalY  += (hrY - resY[i][j]) * (dicoLR[s][ii+i][jj+j].R -Imoy[i][j]);
               //produitScalCb += dicoLR[s][ii+i][jj+j].G * resCb[ii+i][jj+j];
               //produitScalCr += dicoLR[s][ii+i][jj+j].B * resCr[ii+i][jj+j];
-
             }
           }
         }
-
         produitScalY /= ecartType1[i][j]*ecartType2[i][j];
         if(produitScalY > meilleurValY)
         {
@@ -709,8 +716,6 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR,
 
 	bicubicresize(LR, HR); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
 
-  RGBtoYUV(HR,featureY, featureCb, featureCr);
-
 	//Python_Features(featureY,"Reconst_HR_Y"); //On obtient des cartes de features
   //Python_Features(featureCb,"Reconst_HR_Cb"); //On obtient des cartes de features
   //Python_Features(featureCr,"Reconst_HR_Cr"); //On obtient des cartes de features
@@ -720,7 +725,7 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR,
 	PatchManager(HR, ecartType1, featureY,featureCb,featureCr);
 
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
-	DicoVectorSelection(dicoLR,dicoHR, featureY, featureCb,featureCr, ecartType1);
+	DicoVectorSelection(dicoLR,dicoHR, featureY, featureCb,featureCr, ecartType1, HR);
 
 	//garder le coef de correlation
 
