@@ -293,12 +293,134 @@ static void
 completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh, const int & h, const int & w)
 {
   string img_path= "../data/out/";
-  string sLR = "lion_LR";
-  string sHR = "lion_HR";
+  
+  string sY_LR = "lion_Y_LR/";
+  string sCb_LR = "lion_Cb_LR/";
+  string sCr_LR = "lion_Cr_LR/";
+  
+  string sY_HR = "lion_Y_HR/";
+  string sCb_HR = "lion_Cb_HR/";
+  string sCr_HR = "lion_Cr_HR/";
 
   int conv2Length = 127;
 
-  for(int i=0; i<conv2Length; i++){}
+  for(int a=1; a<3; a++)
+  {
+
+    // Y LR
+    for(int i=0; i<conv2Length; i++)
+    {
+      string img_endPath = a+"_conv2-vgg16_" +i;
+      string path = img_path + sY_LR + img_endPath;
+
+      vpImage<unsigned char> I;
+      vpImageIo::read(I,path) ;  
+
+      for(int y=0; y<h; y++)
+      {
+        for(int x=0; x<w; x++)
+        {
+          ((Dl[i])[y][x]).R=I[h][x]; 
+        }
+      }
+    }
+
+
+    // Cb LR
+    for(int i=0; i<conv2Length; i++)
+    {
+      string img_endPath = a+"_conv2-vgg16_" +i;
+      string path = img_path + sCb_LR + img_endPath;
+
+      vpImage<unsigned char> I;
+      vpImageIo::read(I,path) ;  
+
+      for(int y=0; y<h; y++)
+      {
+        for(int x=0; x<w; x++)
+        {
+          ((Dl[i])[y][x]).G=I[h][x]; 
+        }
+      }
+    }
+
+
+    // Cr LR
+    for(int i=0; i<conv2Length; i++)
+    {
+      string img_endPath = a+"_conv2-vgg16_" +i;
+      string path = img_path + sCr_LR + img_endPath;
+
+      vpImage<unsigned char> I;
+      vpImageIo::read(I,path) ;  
+
+      for(int y=0; y<h; y++)
+      {
+        for(int x=0; x<w; x++)
+        {
+          ((Dl[i])[y][x]).B=I[h][x]; 
+        }
+      }
+    }
+
+
+
+    // Y HR
+    for(int i=0; i<conv2Length; i++)
+    {
+      string img_endPath = a+"conv2-vgg16_" +i;
+      string path = img_path + sY_HR + img_endPath;
+
+      vpImage<unsigned char> I;
+      vpImageIo::read(I,path) ;  
+
+      for(int y=0; y<h; y++)
+      {
+        for(int x=0; x<w; x++)
+        {
+          ((Dl[i])[y][x]).R=I[h][x]; 
+        }
+      }
+    }
+
+
+    // Cb LR
+    for(int i=0; i<conv2Length; i++)
+    {
+      string img_endPath = a+"_conv2-vgg16_" +i;
+      string path = img_path + sCb_HR + img_endPath;
+
+      vpImage<unsigned char> I;
+      vpImageIo::read(I,path) ;  
+
+      for(int y=0; y<h; y++)
+      {
+        for(int x=0; x<w; x++)
+        {
+          ((Dl[i])[y][x]).G=I[h][x]; 
+        }
+      }
+    }
+
+
+    // Cr LR
+    for(int i=0; i<conv2Length; i++)
+    {
+      string img_endPath = a+"_conv2-vgg16_" +i;
+      string path = img_path + sCr_HR + img_endPath;
+
+      vpImage<unsigned char> I;
+      vpImageIo::read(I,path) ;  
+
+      for(int y=0; y<h; y++)
+      {
+        for(int x=0; x<w; x++)
+        {
+          ((Dl[i])[y][x]).B=I[h][x]; 
+        }
+      }
+    }
+  }
 }
 
 static void
