@@ -482,8 +482,6 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
   Python_Features(Cb_LR, "lion_Cb_LR");
   Python_Features(Cr_LR, "lion_Cr_LR");
 
-
-
   // copy maps into dictionaries
   completeDico(Dl, Dh, h, w);
 
@@ -502,13 +500,15 @@ Python_Features(vpImage<unsigned char> &I, const char* path) {
 
 static void
 PatchManager(vpImage<vpRGBa> &HR,
-	vpImage<double> &resY, vpImage<double> &resCb,vpImage<double> &resCr) {
+	vpImage<unsigned char> &resY, vpImage<unsigned char> &resCb,vpImage<unsigned char> &resCr) {
 
 	int h_HR = HR.getHeight();
 	int w_HR = HR.getWidth();
 
-	vpImage<double> hrY(h_HR,w_HR); vpImage<double> hrCb(h_HR,w_HR); vpImage<double> hrCr(h_HR,w_HR);
-	RGBtoYUV_Double(HR,hrY,hrCb,hrCr);
+	vpImage<unsigned char> hrY(h_HR,w_HR);
+  vpImage<unsigned char> hrCb(h_HR,w_HR);
+  vpImage<unsigned char> hrCr(h_HR,w_HR);
+	RGBtoYUV(HR,hrY,hrCb,hrCr);
 
 	//On sélectionne un patch dans l'image et donc aussi dans les cartes de features
 	int compteur = 0; //compteur pour la moyenne
@@ -590,7 +590,7 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR)
 
   //system("python CAV.py lion.jpg"); 	//On vgg16 le resultat de ça
 
-	//PatchManager(HR,resY,resCb,resCr);
+	//PatchManager(HR,featureY,featureCb,featureCr);
 
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
 	//DicoVectorSelection(/*dico de LR,*/ resY, resCb,resCr);
