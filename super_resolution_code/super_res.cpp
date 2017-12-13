@@ -538,9 +538,9 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
 
   // VGG16 on LR image
 
-  Python_Features(Y_LR, "lion_Y_LR");
-  Python_Features(Cb_LR, "lion_Cb_LR");
-  Python_Features(Cr_LR, "lion_Cr_LR");
+  //Python_Features(Y_LR, "lion_Y_LR");
+  //Python_Features(Cb_LR, "lion_Cb_LR");
+  //Python_Features(Cr_LR, "lion_Cr_LR");
 
   // copy maps into dictionaries
   completeDico(Dl, Dh);
@@ -563,6 +563,7 @@ static void CalculMoyennePatch(vpImage<vpYCbCr> &I, vpImage<unsigned char> &res,
 
   int h_HR = I.getHeight();
   int w_HR = I.getWidth();
+
   int compteur = 0; //compteur pour la moyenne
   double sumY = 0;
   double variance = 0;
@@ -570,6 +571,7 @@ static void CalculMoyennePatch(vpImage<vpYCbCr> &I, vpImage<unsigned char> &res,
 	{
 		for (int j = 0; j<w_HR; j++)
 		{
+
       sumY = 0;
       compteur = 0;
       variance = 0;
@@ -758,21 +760,21 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR,
 
 	bicubicresize(LR, HR); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
 
-	Python_Features(featureY,"Reconst_HR_Y"); //On obtient des cartes de features
-  Python_Features(featureCb,"Reconst_HR_Cb"); //On obtient des cartes de features
-  Python_Features(featureCr,"Reconst_HR_Cr"); //On obtient des cartes de features
+	//Python_Features(featureY,"Reconst_HR_Y"); //On obtient des cartes de features
+  //Python_Features(featureCb,"Reconst_HR_Cb"); //On obtient des cartes de features
+  //Python_Features(featureCr,"Reconst_HR_Cr"); //On obtient des cartes de features
 
   //system("python CAV.py lion.jpg"); 	//On vgg16 le resultat de ça
 
-	//PatchManager(HR, ecartType1, featureY,featureCb,featureCr);
+	PatchManager(HR, ecartType1, featureY,featureCb,featureCr);
 
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
-	//DicoVectorSelection(dicoLR,dicoHR, featureY, featureCb,featureCr, ecartType1, HR,resultat);
+	DicoVectorSelection(dicoLR,dicoHR, featureY, featureCb,featureCr, ecartType1, HR,resultat);
 
 	//garder le coef de correlation
 
 	//save
-	vpImageIo::write(resultat,"../data/img/superRes.png") ;
+	vpImageIo::write(resultat,"../data/img/superRes.jpg") ;
 
 }
 
