@@ -60,7 +60,29 @@ vpYCbCr_to_double(const vpImage<vpYCbCr> &I,
       Cr[i][j] =   	(double)I[i][j].B;
     }
 }
+static void
+vpYCbCr_to_RGB(const vpImage<vpYCbCr> &I, vpImage<vpRGBa> &res)
+{
+  int h=I.getHeight(), w=I.getWidth();
 
+  for(int i=0; i<h; i++)
+    for(int j=0; j<w; j++)
+    {
+      double R  =   	I[i][j].R + (1.4065 * ( I[i][j].B - 128));
+      double G  = 	I[i][j].R - (0.3455 * ( I[i][j].G -128)) - (0.7169 * (I[i][j].B - 128));
+      double B  =   	I[i][j].R + (1.7790 * ( I[i][j].G - 128));
+
+if(R<0) R = 0; else if (R>255) R = 255;
+if(G<0) G = 0; else if (G>255) G = 255;
+if(B<0) B = 0; else if (B>255) B = 255;
+
+res[i][j].R = (unsigned char)(floor(R));
+res[i][j].G = (unsigned char)(floor(G));
+res[i][j].B = (unsigned char)(floor(B));
+    }
+
+
+}
 #if BICUBIC
 inline unsigned char
 getpixelR(const vpImage<vpRGBa>& in, unsigned y, unsigned x)
@@ -547,7 +569,7 @@ static void CalculMoyennePatch(vpImage<vpYCbCr> &I, vpImage<unsigned char> &res,
   int h_HR = I.getHeight();
   int w_HR = I.getWidth();
   int compteur = 0; //compteur pour la moyenne
-	double sumY = 0;
+  double sumY = 0;
   double variance = 0;
 	for(int i = 0 ; i<h_HR; i++)
 	{
@@ -652,7 +674,7 @@ PatchManager(vpImage<vpRGBa> &HR, vpImage<double> & ecartType1,
 static void
 DicoVectorSelection(vector<vpImage<vpYCbCr> > dicoLR, vector<vpImage<vpYCbCr> > dicoHR,
 	vpImage<unsigned char> &resY, vpImage<unsigned char> &resCb, vpImage<unsigned char> &resCr,
-  vpImage<double> ecartType1, vpImage<vpRGBa> &HR) {
+  vpImage<double> ecartType1, vpImage<vpRGBa> &HR, vpImage<vpRGBa> &resultat) {
 
     int h_HR = HR.getHeight();
     int w_HR = HR.getWidth();
@@ -660,6 +682,7 @@ DicoVectorSelection(vector<vpImage<vpYCbCr> > dicoLR, vector<vpImage<vpYCbCr> > 
     vpImage<unsigned char> hrCb(h_HR,w_HR);
     vpImage<unsigned char> hrCr(h_HR,w_HR);
   	RGBtoYUV(HR,hrY,hrCb,hrCr);
+vpImage<vpYCbCr> resYCbCr (h_HR,w_HR);
 
   int h = dicoLR[0].getHeight(), w = dicoLR[0].getWidth();
   vpImage<vpYCbCr> elementDico(h,w);
@@ -684,7 +707,7 @@ DicoVectorSelection(vector<vpImage<vpYCbCr> > dicoLR, vector<vpImage<vpYCbCr> > 
             if(ii+i >= 0 && ii+i < h && jj+j >= 0 && jj+j < w)
             {
               CalculMoyennePatch(dicoLR[s], Imoy, ecartType2);
-              produitScalY  += (hrY[ii+i][jj+j] - resY[i][j]) * (dicoLR[s][ii+i][jj+j].R -Imoy[i][j]);
+              //produitScalY  += (hrY[ii+i][jj+j] - resY[i][j]) * (dicoLR[s][ii+i][jj+j].R -Imoy[i][j]);
               //produitScalCb += dicoLR[s][ii+i][jj+j].G * resCb[ii+i][jj+j];
               //produitScalCr += dicoLR[s][ii+i][jj+j].B * resCr[ii+i][jj+j];
             }
@@ -699,6 +722,16 @@ DicoVectorSelection(vector<vpImage<vpYCbCr> > dicoLR, vector<vpImage<vpYCbCr> > 
       }
     }
   }
+  /*for(int i = 0 ; i<h; i++)
+    {
+      for (int j = 0; j<w; j++)
+      {
+	resYCbCr[i][j].R = dicoHR[indexY[i][j]][i][j].R;
+	resYCbCr[i][j].G = dicoHR[indexY[i][j]][i][j].G;
+	resYCbCr[i][j].B = dicoHR[indexY[i][j]][i][j].B;
+      }
+   }
+   vpYCbCr_to_RGB(resYCbCr,resultat);*/	
 }
 
 
@@ -706,13 +739,16 @@ static void
 Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR,
   vector<vpImage<vpYCbCr> > dicoLR,vector<vpImage<vpYCbCr> > dicoHR)
 {
+
 	int h = HR.getHeight();
 	int w = HR.getWidth();
+
+	vpImage<vpRGBa> resultat(h,w);
 
 	vpImage<unsigned char> featureY(h,w);
 	vpImage<unsigned char> featureCb(h,w);
 	vpImage<unsigned char> featureCr(h,w);
-  vpImage<double> ecartType1(h,w);
+  	vpImage<double> ecartType1(h,w);
 
 	bicubicresize(LR, HR); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
 
@@ -725,9 +761,12 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR,
 	PatchManager(HR, ecartType1, featureY,featureCb,featureCr);
 
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
-	DicoVectorSelection(dicoLR,dicoHR, featureY, featureCb,featureCr, ecartType1, HR);
+	DicoVectorSelection(dicoLR,dicoHR, featureY, featureCb,featureCr, ecartType1, HR,resultat);
 
 	//garder le coef de correlation
+
+	//save
+	//vpImageIo::write(resultat,"../data/img/superRes.png") ;
 
 }
 
