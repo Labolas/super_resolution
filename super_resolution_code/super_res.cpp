@@ -61,6 +61,7 @@ vpYCbCr_to_double(const vpImage<vpYCbCr> &I,
     }
 }
 
+
 #if BICUBIC
 inline unsigned char
 getpixelR(const vpImage<vpRGBa>& in, unsigned y, unsigned x)
