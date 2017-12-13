@@ -343,12 +343,6 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
       vpImageIo::read(I,path) ;
 
       int h=I.getHeight(), w=I.getWidth();
-      cout << h << "x" << w <<endl;
-
-      vpDisplayX d1(I, 100, 100);
-      vpDisplay::display(I);
-      vpDisplay::flush(I);	
-      vpDisplay::getClick(I);
 
       Dl[i] = vpImage<vpYCbCr>(h,w);
 
@@ -522,7 +516,7 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
   RGBtoYUV(I_HR, Y_HR, Cb_HR, Cr_HR);
 
   // VGG16 on HR image
-  Python_Features(Y_HR, "lion_Y_HR");
+  //Python_Features(Y_HR, "lion_Y_HR");
   //Python_Features(Cb_HR, "lion_Cb_HR");
   //Python_Features(Cr_HR, "lion_Cr_HR");
 
@@ -601,6 +595,7 @@ static void CalculMoyennePatch(vpImage<vpYCbCr> &I, vpImage<unsigned char> &res,
 					}
 				}
 			}
+      
       
       
       variance /= compteur;
@@ -717,18 +712,24 @@ vpImage<vpYCbCr> resYCbCr (h_HR,w_HR);
           }
         }
 
+        if(ecartType1[i][j] == 0 ) ecartType1[i][j] =1;
+        if(ecartType2[i][j] == 0 ) ecartType2[i][j] =1;
+        
         produitScalY /= ecartType1[i][j]*ecartType2[i][j];
         
         if(produitScalY > meilleurValY)
         {
           
+          cout << "test1" <<endl;
           meilleurValY = produitScalY;
           indexY[i][j] = s;
-          
+          cout << "test2" <<endl;
         }
+        
       }
     }
   }
+  
   
   for(int i = 0 ; i<h; i++)
     {
@@ -785,8 +786,12 @@ int main()
 
   vector<vpImage<vpYCbCr> > dicoLR(256);
   vector<vpImage<vpYCbCr> > dicoHR(256);
+  
+  cout << "Dictionary: Init" << endl;
+  
   createDico(dicoLR,dicoHR);
   
+  cout << "Dictionary : Done" << endl;
   
 
   vpImage<vpRGBa> I_LR;
@@ -795,6 +800,10 @@ int main()
   vpImage<vpRGBa> I_HR(h*2,w*2);
   
 
+  cout << "Reconstruction: Init" << endl;
+  
   Reconstruction(I_LR,I_HR,dicoLR,dicoHR);
+  
+  cout << "Reconstruction: Init" << endl;
   return 0;
 }
