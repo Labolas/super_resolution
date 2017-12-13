@@ -335,7 +335,7 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
     for(int i=0; i<conv2Length; i++)
     {
       char img_endPath[40];
-      sprintf(img_endPath, "%d_conv2_%d.png", a, i);
+      sprintf(img_endPath, "%d_conv2_%d.pgm", a, i);
 
       string path = img_path + sY_LR + img_endPath;
 
@@ -366,7 +366,7 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
     for(int i=0; i<conv2Length; i++)
     {
       char img_endPath[40];
-      sprintf(img_endPath, "%d_conv2_%d.png", a, i);
+      sprintf(img_endPath, "%d_conv2_%d.pgm", a, i);
 
       string path = img_path + sCb_LR + img_endPath;
 
@@ -374,9 +374,6 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
       vpImageIo::read(I,path) ;
 
       int h=I.getHeight(), w=I.getWidth();
-
-
-      Dl[i] = vpImage<vpYCbCr>(h,w);
 
       for(int y=0; y<h; y++)
       {
@@ -391,7 +388,7 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
     for(int i=0; i<conv2Length; i++)
     {
       char img_endPath[40];
-      sprintf(img_endPath, "%d_conv2_%d.png", a, i);
+      sprintf(img_endPath, "%d_conv2_%d.pgm", a, i);
 
       string path = img_path + sCr_LR + img_endPath;
 
@@ -399,9 +396,6 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
       vpImageIo::read(I,path) ;
 
       int h=I.getHeight(), w=I.getWidth();
-
-
-      Dl[i] = vpImage<vpYCbCr>(h,w);
 
       for(int y=0; y<h; y++)
       {
@@ -417,7 +411,7 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
     for(int i=0; i<conv2Length; i++)
     {
       char img_endPath[40];
-      sprintf(img_endPath, "%d_conv2_%d.png", a, i);
+      sprintf(img_endPath, "%d_conv2_%d.pgm", a, i);
 
       string path = img_path + sY_HR + img_endPath;
 
@@ -443,7 +437,7 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
     for(int i=0; i<conv2Length; i++)
     {
       char img_endPath[40];
-      sprintf(img_endPath, "%d_conv2_%d.png", a, i);
+      sprintf(img_endPath, "%d_conv2_%d.pgm", a, i);
 
       string path = img_path + sCb_HR + img_endPath;
 
@@ -451,9 +445,6 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
       vpImageIo::read(I,path) ;
 
       int h=I.getHeight(), w=I.getWidth();
-
-
-      Dl[i] = vpImage<vpYCbCr>(h,w);
 
       for(int y=0; y<h; y++)
       {
@@ -470,7 +461,7 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
     for(int i=0; i<conv2Length; i++)
     {
       char img_endPath[40];
-      sprintf(img_endPath, "%d_conv2_%d.png", a, i);
+      sprintf(img_endPath, "%d_conv2_%d.pgm", a, i);
 
       string path = img_path + sCr_HR + img_endPath;
 
@@ -478,9 +469,6 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
       vpImageIo::read(I,path) ;
 
       int h=I.getHeight(), w=I.getWidth();
-
-
-      Dl[i] = vpImage<vpYCbCr>(h,w);
 
       for(int y=0; y<h; y++)
       {
@@ -534,7 +522,7 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
   RGBtoYUV(I_HR, Y_HR, Cb_HR, Cr_HR);
 
   // VGG16 on HR image
-  //Python_Features(Y_HR, "lion_Y_HR");
+  Python_Features(Y_HR, "lion_Y_HR");
   //Python_Features(Cb_HR, "lion_Cb_HR");
   //Python_Features(Cr_HR, "lion_Cr_HR");
 
@@ -739,10 +727,7 @@ vpImage<vpYCbCr> resYCbCr (h_HR,w_HR);
       }
     }
   }
-<<<<<<< HEAD
-  cout << "pass?" << endl;
-=======
->>>>>>> 9e17b7033bcb781765afb475046e79bea42e7951
+  
   for(int i = 0 ; i<h; i++)
     {
       for (int j = 0; j<w; j++)
@@ -752,11 +737,7 @@ vpImage<vpYCbCr> resYCbCr (h_HR,w_HR);
 	resYCbCr[i][j].B = dicoHR[indexY[i][j]][i][j].B;
       }
    }
-<<<<<<< HEAD
-   vpYCbCr_to_RGB(resYCbCr,resultat);	
-=======
    vpYCbCr_to_RGB(resYCbCr,resultat);
->>>>>>> 9e17b7033bcb781765afb475046e79bea42e7951
 }
 
 
@@ -797,28 +778,14 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR,
 
 int main()
 {
-<<<<<<< HEAD
-
-  vpImage<vpRGBa> I;
-  vpImageIo::read(I,"../data/out/lion_Y_LR/conv2/1_conv2_0.png") ;
-
-  vpDisplayX d1(I, 100, 100);
-  vpDisplay::display(I);
-  vpDisplay::flush(I);	
-  vpDisplay::getClick(I);
-
-  
-  
-  
-  exit(1);
-=======
->>>>>>> 9e17b7033bcb781765afb475046e79bea42e7951
   // resize factor
   int n=2;
 
   vector<vpImage<vpYCbCr> > dicoLR(256);
   vector<vpImage<vpYCbCr> > dicoHR(256);
   createDico(dicoLR,dicoHR);
+  
+  
 
   vpImage<vpRGBa> I_LR;
   vpImageIo::read(I_LR,"../data/img/lionReconst_LR.jpg") ;
