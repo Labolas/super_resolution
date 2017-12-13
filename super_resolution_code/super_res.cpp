@@ -343,7 +343,12 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
       vpImageIo::read(I,path) ;
 
       int h=I.getHeight(), w=I.getWidth();
+      cout << h << "x" << w <<endl;
 
+      vpDisplayX d1(I, 100, 100);
+      vpDisplay::display(I);
+      vpDisplay::flush(I);	
+      vpDisplay::getClick(I);
 
       Dl[i] = vpImage<vpYCbCr>(h,w);
 
@@ -587,11 +592,12 @@ static void CalculMoyennePatch(vpImage<vpYCbCr> &I, vpImage<unsigned char> &res,
 					if(ii+i >= 0 && ii+i < h_HR && jj+j >= 0 && jj+j < w_HR)
 					{
 						sumY	 += I[ii+i][jj+j].R;
-						compteur ++;
+						compteur++;
 					}
 				}
 			}
 
+      
 			double moyPatchY 	= sumY  / compteur;
 			res[i][j] =  moyPatchY;
 
@@ -605,8 +611,13 @@ static void CalculMoyennePatch(vpImage<vpYCbCr> &I, vpImage<unsigned char> &res,
 					}
 				}
 			}
+      
+      
       variance /= compteur;
+      
       ecartType[i][j] = sqrt(variance);
+      
+      
 		}
 	}
 }
@@ -697,6 +708,7 @@ vpImage<vpYCbCr> resYCbCr (h_HR,w_HR);
 
   for (int s = 0; s<256 ; s++)
   {
+    CalculMoyennePatch(dicoLR[s], Imoy, ecartType2);
     for(int i = 0 ; i<h; i++)
     {
       for (int j = 0; j<w; j++)
@@ -708,23 +720,26 @@ vpImage<vpYCbCr> resYCbCr (h_HR,w_HR);
           {
             if(ii+i >= 0 && ii+i < h && jj+j >= 0 && jj+j < w)
             {
-              CalculMoyennePatch(dicoLR[s], Imoy, ecartType2);
-              //produitScalY  += (hrY[ii+i][jj+j] - resY[i][j]) * (dicoLR[s][ii+i][jj+j].R -Imoy[i][j]);
+              produitScalY  += (hrY[ii+i][jj+j] - resY[i][j]) * (dicoLR[s][ii+i][jj+j].R -Imoy[i][j]);
               //produitScalCb += dicoLR[s][ii+i][jj+j].G * resCb[ii+i][jj+j];
               //produitScalCr += dicoLR[s][ii+i][jj+j].B * resCr[ii+i][jj+j];
             }
           }
         }
         produitScalY /= ecartType1[i][j]*ecartType2[i][j];
+        
         if(produitScalY > meilleurValY)
         {
+          
           meilleurValY = produitScalY;
           indexY[i][j] = s;
+          
         }
       }
     }
   }
-  /*for(int i = 0 ; i<h; i++)
+  cout << "pass?" << endl;
+  for(int i = 0 ; i<h; i++)
     {
       for (int j = 0; j<w; j++)
       {
@@ -733,7 +748,7 @@ vpImage<vpYCbCr> resYCbCr (h_HR,w_HR);
 	resYCbCr[i][j].B = dicoHR[indexY[i][j]][i][j].B;
       }
    }
-   vpYCbCr_to_RGB(resYCbCr,resultat);*/	
+   vpYCbCr_to_RGB(resYCbCr,resultat);	
 }
 
 
@@ -768,13 +783,25 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR,
 	//garder le coef de correlation
 
 	//save
-	//vpImageIo::write(resultat,"../data/img/superRes.png") ;
+	vpImageIo::write(resultat,"../data/img/superRes.png") ;
 
 }
 
 int main()
 {
 
+  vpImage<vpRGBa> I;
+  vpImageIo::read(I,"../data/out/lion_Y_LR/conv2/1_conv2_0.png") ;
+
+  vpDisplayX d1(I, 100, 100);
+  vpDisplay::display(I);
+  vpDisplay::flush(I);	
+  vpDisplay::getClick(I);
+
+  
+  
+  
+  exit(1);
   // resize factor
   int n=2;
 
@@ -786,6 +813,7 @@ int main()
   vpImageIo::read(I_LR,"../data/img/lionReconst_LR.jpg") ;
   int h=I_LR.getHeight(), w=I_LR.getWidth();
   vpImage<vpRGBa> I_HR(h*2,w*2);
+  
 
   Reconstruction(I_LR,I_HR,dicoLR,dicoHR);
   return 0;
