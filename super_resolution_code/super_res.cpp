@@ -550,9 +550,9 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
 
   // VGG16 on LR image
 
-  //Python_Features(Y_LR, "lion_Y_LR");
-  //Python_Features(Cb_LR, "lion_Cb_LR");
-  //Python_Features(Cr_LR, "lion_Cr_LR");
+  Python_Features(Y_LR, "lion_Y_LR");
+  Python_Features(Cb_LR, "lion_Cb_LR");
+  Python_Features(Cr_LR, "lion_Cr_LR");
 
   // copy maps into dictionaries
   completeDico(Dl, Dh);
@@ -704,7 +704,7 @@ vpImage<vpYCbCr> resYCbCr (h_HR,w_HR);
   vpImage<double> indexY(h,w,0);
   double meilleurValY = 0;
   double produitScalY = 0;
-  vpImage<double> ecartType2(h,w);
+  vpImage<double> ecartType2(h_HR,w_HR);
 
   for (int s = 0; s<256 ; s++)
   {
@@ -726,6 +726,7 @@ vpImage<vpYCbCr> resYCbCr (h_HR,w_HR);
             }
           }
         }
+
         produitScalY /= ecartType1[i][j]*ecartType2[i][j];
         
         if(produitScalY > meilleurValY)
@@ -738,7 +739,10 @@ vpImage<vpYCbCr> resYCbCr (h_HR,w_HR);
       }
     }
   }
+<<<<<<< HEAD
   cout << "pass?" << endl;
+=======
+>>>>>>> 9e17b7033bcb781765afb475046e79bea42e7951
   for(int i = 0 ; i<h; i++)
     {
       for (int j = 0; j<w; j++)
@@ -748,7 +752,11 @@ vpImage<vpYCbCr> resYCbCr (h_HR,w_HR);
 	resYCbCr[i][j].B = dicoHR[indexY[i][j]][i][j].B;
       }
    }
+<<<<<<< HEAD
    vpYCbCr_to_RGB(resYCbCr,resultat);	
+=======
+   vpYCbCr_to_RGB(resYCbCr,resultat);
+>>>>>>> 9e17b7033bcb781765afb475046e79bea42e7951
 }
 
 
@@ -769,16 +777,16 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR,
 
 	bicubicresize(LR, HR); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
 
-	//Python_Features(featureY,"Reconst_HR_Y"); //On obtient des cartes de features
-  //Python_Features(featureCb,"Reconst_HR_Cb"); //On obtient des cartes de features
-  //Python_Features(featureCr,"Reconst_HR_Cr"); //On obtient des cartes de features
+	Python_Features(featureY,"Reconst_HR_Y"); //On obtient des cartes de features
+  Python_Features(featureCb,"Reconst_HR_Cb"); //On obtient des cartes de features
+  Python_Features(featureCr,"Reconst_HR_Cr"); //On obtient des cartes de features
 
   //system("python CAV.py lion.jpg"); 	//On vgg16 le resultat de ça
 
-	PatchManager(HR, ecartType1, featureY,featureCb,featureCr);
+	//PatchManager(HR, ecartType1, featureY,featureCb,featureCr);
 
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
-	DicoVectorSelection(dicoLR,dicoHR, featureY, featureCb,featureCr, ecartType1, HR,resultat);
+	//DicoVectorSelection(dicoLR,dicoHR, featureY, featureCb,featureCr, ecartType1, HR,resultat);
 
 	//garder le coef de correlation
 
@@ -789,6 +797,7 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR,
 
 int main()
 {
+<<<<<<< HEAD
 
   vpImage<vpRGBa> I;
   vpImageIo::read(I,"../data/out/lion_Y_LR/conv2/1_conv2_0.png") ;
@@ -802,6 +811,8 @@ int main()
   
   
   exit(1);
+=======
+>>>>>>> 9e17b7033bcb781765afb475046e79bea42e7951
   // resize factor
   int n=2;
 
