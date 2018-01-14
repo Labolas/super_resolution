@@ -69,20 +69,17 @@ vpYCbCr_to_RGB(const vpImage<vpYCbCr> &I, vpImage<vpRGBa> &res)
     for(int j=0; j<w; j++)
     {
       double R  =   	I[i][j].R + (1.4065 * ( I[i][j].B - 128));
-      double G  = 	I[i][j].R - (0.3455 * ( I[i][j].G -128)) - (0.7169 * (I[i][j].B - 128));
+      double G  = 	  I[i][j].R - (0.3455 * ( I[i][j].G - 128)) - (0.7169 * (I[i][j].B - 128));
       double B  =   	I[i][j].R + (1.7790 * ( I[i][j].G - 128));
 
-if(R<0) R = 0; else if (R>255) R = 255;
-if(G<0) G = 0; else if (G>255) G = 255;
-if(B<0) B = 0; else if (B>255) B = 255;
+      if(R<0) R = 0; else if (R>255) R = 255;
+      if(G<0) G = 0; else if (G>255) G = 255;
+      if(B<0) B = 0; else if (B>255) B = 255;
 
-res[i][j].R = (unsigned char)(floor(R));
-res[i][j].G = (unsigned char)(floor(G));
-res[i][j].B = (unsigned char)(floor(B));
+      res[i][j].R = (unsigned char)(floor(R));
+      res[i][j].G = (unsigned char)(floor(G));
+      res[i][j].B = (unsigned char)(floor(B));
     }
-
-
-
 }
 
 #if BICUBIC
@@ -326,7 +323,7 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
   string sCb_HR = "lion_Cb_HR/conv2/";
   string sCr_HR = "lion_Cr_HR/conv2/";
 
-  int conv2Length = 127;
+  int conv2Length = 128;
 
   for(int a=1; a<3; a++)
   {
@@ -344,13 +341,13 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
 
       int h=I.getHeight(), w=I.getWidth();
 
-      Dl[i] = vpImage<vpYCbCr>(h,w);
+      Dl[i+128*(a-1)] = vpImage<vpYCbCr>(h,w);
 
       for(int y=0; y<h; y++)
       {
         for(int x=0; x<w; x++)
         {
-          ((Dl[i])[y][x]).R=I[y][x];
+          ((Dl[i+128*(a-1)])[y][x]).R=I[y][x];
         }
       }
     }
@@ -373,7 +370,7 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
       {
         for(int x=0; x<w; x++)
         {
-          ((Dl[i])[y][x]).G=I[y][x];
+          ((Dl[i+128*(a-1)])[y][x]).G=I[y][x];
         }
       }
     }
@@ -395,7 +392,7 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
       {
         for(int x=0; x<w; x++)
         {
-          ((Dl[i])[y][x]).B=I[y][x];
+          ((Dl[i+128*(a-1)])[y][x]).B=I[y][x];
         }
       }
     }
@@ -415,13 +412,13 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
       int h=I.getHeight(), w=I.getWidth();
 
 
-      Dl[i] = vpImage<vpYCbCr>(h,w);
+      Dh[i+128*(a-1)] = vpImage<vpYCbCr>(h,w);
 
       for(int y=0; y<h; y++)
       {
         for(int x=0; x<w; x++)
         {
-          ((Dl[i])[y][x]).R=I[y][x];
+          ((Dh[i+128*(a-1)])[y][x]).R=I[y][x];
         }
       }
     }
@@ -444,7 +441,7 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
       {
         for(int x=0; x<w; x++)
         {
-          ((Dl[i])[y][x]).G=I[y][x];
+          ((Dh[i+128*(a-1)])[y][x]).G=I[y][x];
         }
       }
     }
@@ -468,7 +465,7 @@ completeDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
       {
         for(int x=0; x<w; x++)
         {
-          ((Dl[i])[y][x]).B=I[y][x];
+          ((Dh[i+128*(a-1)])[y][x]).B=I[y][x];
         }
       }
     }
@@ -501,9 +498,15 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
   int n=2;
 
   // Low resolution image
-  vpImage<vpRGBa> I_HR;
-  vpImageIo::read(I_HR,"../data/img/lion.jpg") ;
-  int h=I_HR.getHeight(), w=I_HR.getWidth();
+  vpImage<vpRGBa> I_base_LR;
+  vpImage<vpRGBa> I_base_HR;
+  vpImageIo::read(I_base_LR,"../data/img/lionReconst_LR.jpg") ;
+  vpImageIo::read(I_base_HR,"../data/img/lion.jpg") ;
+  int h=I_base_HR.getHeight(), w=I_base_HR.getWidth();
+  
+  vpImage<vpRGBa> I_LR_bicu(h, w, 0);
+  
+  bicubicresize(I_base_LR, I_LR_bicu);
 
   vpImage<unsigned char> Y_HR(h,w);
   vpImage<unsigned char> Cb_HR(h,w);
@@ -513,28 +516,18 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
   vpImage<unsigned char> Cb_LR(h,w);
   vpImage<unsigned char> Cr_LR(h,w);
 
-  RGBtoYUV(I_HR, Y_HR, Cb_HR, Cr_HR);
+  RGBtoYUV(I_LR_bicu, Y_LR, Cb_LR, Cr_LR);
+  RGBtoYUV(I_base_HR, Y_HR, Cb_HR, Cr_HR);
 
   // VGG16 on HR image
-  //Python_Features(Y_HR, "lion_Y_HR");
-  //Python_Features(Cb_HR, "lion_Cb_HR");
-  //Python_Features(Cr_HR, "lion_Cr_HR");
-
-  // Low Resolution Image
-  vpImage<vpRGBa> I_LR(h/n,w/n,0);
-  vpImage<vpRGBa> I_HRbis(h,w,0);
-
-  // Resize
-  bicubicresize(I_HR, I_LR);
-  bicubicresize(I_LR, I_HRbis);
-
-  RGBtoYUV(I_HRbis, Y_LR, Cb_LR, Cr_LR);
-
-  // VGG16 on LR image
-
   //Python_Features(Y_LR, "lion_Y_LR");
   //Python_Features(Cb_LR, "lion_Cb_LR");
   //Python_Features(Cr_LR, "lion_Cr_LR");
+  
+  // VGG16 on LR image
+  //Python_Features(Y_HR, "lion_Y_HR");
+  //Python_Features(Cb_HR, "lion_Cb_HR");
+  //Python_Features(Cr_HR, "lion_Cr_HR");
 
   // copy maps into dictionaries
   completeDico(Dl, Dh);
@@ -680,66 +673,61 @@ DicoVectorSelection(vector<vpImage<vpYCbCr> > dicoLR, vector<vpImage<vpYCbCr> > 
     vpImage<unsigned char> hrCb(h_HR,w_HR);
     vpImage<unsigned char> hrCr(h_HR,w_HR);
   	RGBtoYUV(HR,hrY,hrCb,hrCr);
-vpImage<vpYCbCr> resYCbCr (h_HR,w_HR);
+    vpImage<vpYCbCr> resYCbCr (h_HR,w_HR);
 
   int h = dicoLR[0].getHeight(), w = dicoLR[0].getWidth();
   vpImage<vpYCbCr> elementDico(h,w);
 
   vpImage<unsigned char> Imoy(h,w,0);
-  vpImage<double> indexY(h,w,0);
+  vpImage<int> indexY(h_HR,w_HR,0);
   double meilleurValY = 0;
   double produitScalY = 0;
   vpImage<double> ecartType2(h_HR,w_HR);
 
   for (int s = 0; s<256 ; s++)
   {
+    meilleurValY = 0;
     CalculMoyennePatch(dicoLR[s], Imoy, ecartType2);
-    for(int i = 0 ; i<h; i++)
+    for(int i = 0 ; i<h_HR; i++)
     {
-      for (int j = 0; j<w; j++)
+      for (int j = 0; j<w_HR; j++)
       {
         produitScalY = 0;
         for(int ii = -4 ; ii<5; ii++)
         {
           for (int jj = -4; jj<5; jj++)
           {
-            if(ii+i >= 0 && ii+i < h && jj+j >= 0 && jj+j < w)
+            if(ii+i >= 0 && ii+i < h_HR-6 && jj+j >= 0 && jj+j < w_HR)
             {
-              produitScalY  += (hrY[ii+i][jj+j] - resY[i][j]) * (dicoLR[s][ii+i][jj+j].R -Imoy[i][j]);
-              //produitScalCb += dicoLR[s][ii+i][jj+j].G * resCb[ii+i][jj+j];
-              //produitScalCr += dicoLR[s][ii+i][jj+j].B * resCr[ii+i][jj+j];
+              produitScalY  += (hrY[ii+i][jj+j] - resY[i][j]) * (dicoLR[s][(ii+i)/2][(jj+j)/2].R - Imoy[i/2][j/2]);
             }
           }
         }
 
-        if(ecartType1[i][j] == 0 ) ecartType1[i][j] =1;
-        if(ecartType2[i][j] == 0 ) ecartType2[i][j] =1;
+        if(ecartType1[i][j] == 0 ) ecartType1[i][j] = 1;
+        if(ecartType2[i][j] == 0 ) ecartType2[i][j] = 1;
         
         produitScalY /= ecartType1[i][j]*ecartType2[i][j];
-        
+       
         if(produitScalY > meilleurValY)
         {
-          
-          cout << "test1" <<endl;
           meilleurValY = produitScalY;
           indexY[i][j] = s;
-          cout << "test2" <<endl;
-        }
-        
+        }  
       }
     }
   }
   
-  
-  for(int i = 0 ; i<h; i++)
+  for(int i = 0 ; i<h_HR-6; i++)
     {
-      for (int j = 0; j<w; j++)
-      {
-	resYCbCr[i][j].R = dicoHR[indexY[i][j]][i][j].R;
-	resYCbCr[i][j].G = dicoHR[indexY[i][j]][i][j].G;
-	resYCbCr[i][j].B = dicoHR[indexY[i][j]][i][j].B;
+      for (int j = 0; j<w_HR; j++)
+      { 
+	      resYCbCr[i][j].R = dicoHR[indexY[i][j]][i/2][j/2].R;
+	      resYCbCr[i][j].G = dicoHR[indexY[i][j]][i/2][j/2].G;
+	      resYCbCr[i][j].B = dicoHR[indexY[i][j]][i/2][j/2].B;
       }
    }
+  
    vpYCbCr_to_RGB(resYCbCr,resultat);
 }
 
@@ -766,11 +754,11 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR,
   //Python_Features(featureCr,"Reconst_HR_Cr"); //On obtient des cartes de features
 
   //system("python CAV.py lion.jpg"); 	//On vgg16 le resultat de ça
-
+  
 	PatchManager(HR, ecartType1, featureY,featureCb,featureCr);
-
+  
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
-	DicoVectorSelection(dicoLR,dicoHR, featureY, featureCb,featureCr, ecartType1, HR,resultat);
+	DicoVectorSelection(dicoLR, dicoHR, featureY, featureCb, featureCr, ecartType1, HR, resultat);
 
 	//garder le coef de correlation
 
@@ -797,13 +785,13 @@ int main()
   vpImage<vpRGBa> I_LR;
   vpImageIo::read(I_LR,"../data/img/lionReconst_LR.jpg") ;
   int h=I_LR.getHeight(), w=I_LR.getWidth();
-  vpImage<vpRGBa> I_HR(h*2,w*2);
+  vpImage<vpRGBa> I_HR(h*2,w*2,0);
   
 
   cout << "Reconstruction: Init" << endl;
   
   Reconstruction(I_LR,I_HR,dicoLR,dicoHR);
   
-  cout << "Reconstruction: Init" << endl;
+  cout << "Reconstruction: Done" << endl;
   return 0;
 }
