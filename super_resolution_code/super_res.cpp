@@ -722,9 +722,9 @@ DicoVectorSelection(vector<vpImage<vpYCbCr> > dicoLR, vector<vpImage<vpYCbCr> > 
     {
       for (int j = 0; j<w_HR; j++)
       { 
-	      resYCbCr[i][j].R = dicoHR[indexY[i][j]][i/2][j/2].R;
-	      resYCbCr[i][j].G = dicoHR[indexY[i][j]][i/2][j/2].G;
-	      resYCbCr[i][j].B = dicoHR[indexY[i][j]][i/2][j/2].B;
+	      resultat[i][j].R = dicoHR[indexY[i][j]][i/2][j/2].R;
+	      resultat[i][j].G = dicoHR[indexY[i][j]][i/2][j/2].G;
+	      resultat[i][j].B = dicoHR[indexY[i][j]][i/2][j/2].B;
       }
    }
   
