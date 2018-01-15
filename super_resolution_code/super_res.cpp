@@ -546,27 +546,27 @@ Python_Features(vpImage<unsigned char> &I, const char* path) {
 }
 
 static void CalculMoyennePatch(vpImage<vpYCbCr> &I, vpImage<unsigned char> &res,
-    vpImage<double> & ecartType) {
+    vpImage<double> & ecartType, const int & s)
+{
 
-  int h_HR = I.getHeight();
-  int w_HR = I.getWidth();
+  int h = I.getHeight();
+  int w = I.getWidth();
 
   int compteur = 0; //compteur pour la moyenne
   double sumY = 0;
   double variance = 0;
-	for(int i = 0 ; i<h_HR; i++)
+	for(int i = 0 ; i<h; i++)
 	{
-		for (int j = 0; j<w_HR; j++)
+		for (int j = 0; j<w; j++)
 		{
-
       sumY = 0;
       compteur = 0;
       variance = 0;
-			for(int ii = -4 ; ii<5; ii++)
+			for(int ii = -2 ; ii<3; ii++)
 			{
-				for (int jj = -4; jj<5; jj++)
+				for (int jj = -2; jj<3; jj++)
 				{
-					if(ii+i >= 0 && ii+i < h_HR && jj+j >= 0 && jj+j < w_HR)
+					if(ii+i >= 0 && ii+i < h && jj+j >= 0 && jj+j < w)
 					{
 						sumY	 += I[ii+i][jj+j].R;
 						compteur++;
@@ -574,28 +574,23 @@ static void CalculMoyennePatch(vpImage<vpYCbCr> &I, vpImage<unsigned char> &res,
 				}
 			}
 
-      
 			double moyPatchY 	= sumY  / compteur;
 			res[i][j] =  moyPatchY;
 
-      for(int ii = -4 ; ii<5; ii++)
+      for(int ii = -2 ; ii<3; ii++)
 			{
-				for (int jj = -4; jj<5; jj++)
+				for (int jj = -2; jj<3; jj++)
 				{
-					if(ii+i >= 0 && ii+i < h_HR && jj+j >= 0 && jj+j < w_HR)
+					if(ii+i >= 0 && ii+i < h && jj+j >= 0 && jj+j < w)
 					{
             variance += (I[ii+i][jj+j].R - moyPatchY) * (I[ii+i][jj+j].R - moyPatchY) ;
 					}
 				}
 			}
-      
-      
-      
+           
       variance /= compteur;
       
       ecartType[i][j] = sqrt(variance);
-      
-      
 		}
 	}
 }
@@ -613,7 +608,7 @@ PatchManager(vpImage<vpRGBa> &HR, vpImage<double> & ecartType1,
 	RGBtoYUV(HR,hrY,hrCb,hrCr);
 
 	//On sélectionne un patch dans l'image et donc aussi dans les cartes de features
-	int compteur = 0; //compteur pour la moyenne
+	double compteur = 0; //compteur pour la moyenne
 	double sumY = 0;double sumCb = 0;double sumCr = 0;
   double variance = 0;
 
@@ -657,6 +652,7 @@ PatchManager(vpImage<vpRGBa> &HR, vpImage<double> & ecartType1,
 				}
 			}
       variance /= compteur;
+      
       ecartType1[i][j] = sqrt(variance);
 		}
 	}
@@ -678,57 +674,70 @@ DicoVectorSelection(vector<vpImage<vpYCbCr> > dicoLR, vector<vpImage<vpYCbCr> > 
   int h = dicoLR[0].getHeight(), w = dicoLR[0].getWidth();
   vpImage<vpYCbCr> elementDico(h,w);
 
-  vpImage<unsigned char> Imoy(h,w,0);
+  vector<vpImage<unsigned char> > Imoy(256);
   vpImage<int> indexY(h_HR,w_HR,0);
   double meilleurValY = 0;
   double produitScalY = 0;
-  vpImage<double> ecartType2(h_HR,w_HR);
+  vector<vpImage<double> > ecartType2(256);
 
-  for (int s = 0; s<256 ; s++)
+  for(int s=0; s<256; s++)
   {
-    meilleurValY = 0;
-    CalculMoyennePatch(dicoLR[s], Imoy, ecartType2);
-    for(int i = 0 ; i<h_HR; i++)
+    Imoy[s] = vpImage<unsigned char>(h,w,0);
+    ecartType2[s] = vpImage<double>(h,w,0);
+    CalculMoyennePatch(dicoLR[s], Imoy[s], ecartType2[s], s);
+  }
+  
+  cout << "means & standard deviation : done" << endl;
+  
+    for(int i = 0 ; i<h_HR-2; i++)
     {
       for (int j = 0; j<w_HR; j++)
       {
-        produitScalY = 0;
-        for(int ii = -4 ; ii<5; ii++)
+        meilleurValY = 0;
+        for (int s = 0; s<256 ; s++)
         {
-          for (int jj = -4; jj<5; jj++)
+          produitScalY = 0;
+          
+          for(int ii = -4 ; ii<5; ii++)
           {
-            if(ii+i >= 0 && ii+i < h_HR-6 && jj+j >= 0 && jj+j < w_HR)
+            for (int jj = -4; jj<5; jj++)
             {
-              produitScalY  += (hrY[ii+i][jj+j] - resY[i][j]) * (dicoLR[s][(ii+i)/2][(jj+j)/2].R - Imoy[i/2][j/2]);
+              if(ii+i >= 0 && ii+i < h_HR-6 && jj+j >= 0 && jj+j < w_HR)
+              {
+                produitScalY  += (hrY[ii+i][jj+j] - resY[i][j]) * (dicoLR[s][(ii+i)>>1][(jj+j)>>1].R - Imoy[s][i>>1][j>>1]);
+              }
             }
           }
-        }
 
-        if(ecartType1[i][j] == 0 ) ecartType1[i][j] = 1;
-        if(ecartType2[i][j] == 0 ) ecartType2[i][j] = 1;
+          if(ecartType1[i][j] == 0 ) ecartType1[i][j] = 1;
+          if(ecartType2[s][i>>1][j>>1] == 0 ) ecartType2[s][i>>1][j>>1] = 1;
         
-        produitScalY /= ecartType1[i][j]*ecartType2[i][j];
+          produitScalY /= ecartType1[i][j]*ecartType2[s][i>>1][j>>1];
        
-        if(produitScalY > meilleurValY)
-        {
-          meilleurValY = produitScalY;
-          indexY[i][j] = s;
-        }  
+          if(produitScalY > meilleurValY)
+          {
+            meilleurValY = produitScalY;
+            indexY[i][j] = s;
+          }  
+        }
       }
     }
-  }
+  
+  cout << "indexation done" <<endl;
   
   for(int i = 0 ; i<h_HR-6; i++)
     {
       for (int j = 0; j<w_HR; j++)
       { 
-	      resultat[i][j].R = dicoHR[indexY[i][j]][i/2][j/2].R;
-	      resultat[i][j].G = dicoHR[indexY[i][j]][i/2][j/2].G;
-	      resultat[i][j].B = dicoHR[indexY[i][j]][i/2][j/2].B;
+	      resYCbCr[i][j].R = dicoHR[indexY[i][j]][i>>1][j>>1].R; 
+	      resYCbCr[i][j].G = dicoHR[indexY[i][j]][i>>1][j>>1].G;
+	      resYCbCr[i][j].B = dicoHR[indexY[i][j]][i>>1][j>>1].B;
+        
+        cout << "RGB = " << (int)resYCbCr[i][j].R << " ; " << (int)resYCbCr[i][j].G << " ; " << (int)resYCbCr[i][j].R << endl; 
       }
    }
   
-   vpYCbCr_to_RGB(resYCbCr,resultat);
+   vpYCbCr_to_RGB(resYCbCr, resultat);
 }
 
 
@@ -745,7 +754,7 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR,
 	vpImage<unsigned char> featureY(h,w);
 	vpImage<unsigned char> featureCb(h,w);
 	vpImage<unsigned char> featureCr(h,w);
-  	vpImage<double> ecartType1(h,w);
+  vpImage<double> ecartType1(h,w);
 
 	bicubicresize(LR, HR); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
 
@@ -793,5 +802,6 @@ int main()
   Reconstruction(I_LR,I_HR,dicoLR,dicoHR);
   
   cout << "Reconstruction: Done" << endl;
+  
   return 0;
 }
