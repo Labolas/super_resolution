@@ -13,10 +13,10 @@ typedef vpRGBa vpYCbCr;
 #define BICUBIC     1
 #define BILINEAR    0
 
-void Python_Features(vpImage<unsigned char> &I, const char* path);
+void Python_Features(vpImage<unsigned char> & I, const char* path);
 
 static void
-RGBtoYUV_Double(const vpImage<vpRGBa> &RGB, vpImage<double> &Y_D, vpImage<double> &Cb_D, vpImage<double> &Cr_D)
+RGBtoYUV_Double(const vpImage<vpRGBa> & RGB, vpImage<double> & Y_D, vpImage<double> & Cb_D, vpImage<double> & Cr_D)
 {
   int h=RGB.getHeight(), w=RGB.getWidth();
 
@@ -32,8 +32,8 @@ RGBtoYUV_Double(const vpImage<vpRGBa> &RGB, vpImage<double> &Y_D, vpImage<double
 
 
 static void
-RGBtoYUV(const vpImage<vpRGBa> &I,
-	 vpImage<unsigned char> &Y, vpImage<unsigned char> &Cb, vpImage<unsigned char> &Cr)
+RGBtoYUV(const vpImage<vpRGBa> & I,
+	 vpImage<unsigned char> & Y, vpImage<unsigned char> & Cb, vpImage<unsigned char> & Cr)
 {
   int h=I.getHeight(), w=I.getWidth();
 
@@ -47,8 +47,8 @@ RGBtoYUV(const vpImage<vpRGBa> &I,
 }
 
 static void
-vpYCbCr_to_double(const vpImage<vpYCbCr> &I,
-	 vpImage<double> &Y, vpImage<double> &Cb, vpImage<double> &Cr)
+vpYCbCr_to_double(const vpImage<vpYCbCr> & I,
+	 vpImage<double> & Y, vpImage<double> & Cb, vpImage<double> & Cr)
 {
   int h=I.getHeight(), w=I.getWidth();
 
@@ -61,7 +61,7 @@ vpYCbCr_to_double(const vpImage<vpYCbCr> &I,
     }
 }
 static void
-vpYCbCr_to_RGB(const vpImage<vpYCbCr> &I, vpImage<vpRGBa> &res)
+vpYCbCr_to_RGB(const vpImage<vpYCbCr> & I, vpImage<vpRGBa> & res)
 {
   int h=I.getHeight(), w=I.getWidth();
 
@@ -84,7 +84,7 @@ vpYCbCr_to_RGB(const vpImage<vpYCbCr> &I, vpImage<vpRGBa> &res)
 
 #if BICUBIC
 inline unsigned char
-getpixelR(const vpImage<vpRGBa>& in, unsigned y, unsigned x)
+getpixelR(const vpImage<vpRGBa> & in, const unsigned & y, const unsigned & x)
 {
   int h=in.getHeight(), w=in.getWidth();
     if (x < w && y < h)
@@ -93,7 +93,7 @@ getpixelR(const vpImage<vpRGBa>& in, unsigned y, unsigned x)
     return 0;
 }
 inline unsigned char
-getpixelG(const vpImage<vpRGBa>& in, unsigned y, unsigned x)
+getpixelG(const vpImage<vpRGBa> & in, const unsigned & y, const unsigned & x)
 {
   int h=in.getHeight(), w=in.getWidth();
     if (x < w && y < h)
@@ -102,7 +102,7 @@ getpixelG(const vpImage<vpRGBa>& in, unsigned y, unsigned x)
     return 0;
 }
 inline double
-getpixelB(const vpImage<vpRGBa>& in, unsigned int y, unsigned int x)
+getpixelB(const vpImage<vpRGBa> & in, const unsigned int & y, const unsigned int & x)
 {
   int h=in.getHeight(), w=in.getWidth();
     if (x < w && y < h)
@@ -112,7 +112,7 @@ getpixelB(const vpImage<vpRGBa>& in, unsigned int y, unsigned int x)
 }
 
 static void
-bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
+bicubicresize(const vpImage<vpRGBa> & in, vpImage<vpRGBa> & out)
 {
   int h=in.getHeight(), w=in.getWidth();
   int out_h=out.getHeight(), out_w=out.getWidth();
@@ -224,11 +224,11 @@ bicubicresize(const vpImage<vpRGBa>& in, vpImage<vpRGBa> & out)
  * @param p : un point de l image agrandie
  * role: determine la couleur du pixel par interpolation bilineaire
  */
-vpRGBa bilinearInterpol(const vpImage<vpRGBa> &I,
-			const unsigned int &N,
-			const unsigned int &i,
-			const unsigned int &j){
-
+vpRGBa bilinearInterpol(const vpImage<vpRGBa> & I,
+			const unsigned int & N,
+			const unsigned int & i,
+			const unsigned int & j)
+{
   // revoir /////////////////////////////
   int jGauche=0, jDroit=0, iHaut, iBas;
   int h=I.getHeight(), w= I.getWidth();
@@ -292,7 +292,7 @@ vpRGBa bilinearInterpol(const vpImage<vpRGBa> &I,
  * @param N: facteur d agrandissement
  */
 static void
-upscale_bilinearInterpol(const vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR, const unsigned int &N)
+upscale_bilinearInterpol(const vpImage<vpRGBa> & LR, vpImage<vpRGBa> & HR, const unsigned int & N)
 {
   int h=LR.getHeight(), w= LR.getWidth();
 
@@ -500,8 +500,8 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
   // Low resolution image
   vpImage<vpRGBa> I_base_LR;
   vpImage<vpRGBa> I_base_HR;
-  vpImageIo::read(I_base_LR,"../data/img/lionReconst_LR.jpg") ;
-  vpImageIo::read(I_base_HR,"../data/img/lion.jpg") ;
+  vpImageIo::read(I_base_LR,"../data/img/lionReconst_LR.png") ;
+  vpImageIo::read(I_base_HR,"../data/img/lion.png") ;
   int h=I_base_HR.getHeight(), w=I_base_HR.getWidth();
   
   vpImage<vpRGBa> I_LR_bicu(h, w, 0);
@@ -537,16 +537,16 @@ createDico(vector<vpImage<vpYCbCr> > & Dl, vector<vpImage<vpYCbCr> > & Dh)
 //////////////Reconstrution Thibault
 /////////////////////////////////////////////////
 void
-Python_Features(vpImage<unsigned char> &I, const char* path) {
+Python_Features(vpImage<unsigned char> & I, const char* path) {
 	string imgPath = "../data/img/";
-	vpImageIo::write(I,imgPath+path+".jpg");
+	vpImageIo::write(I,imgPath+path+".png");
   char python[30];
-  sprintf(python,"python CAV.py %s.jpg",path)  ;
+  sprintf(python,"python CAV.py %s.png",path)  ;
 	system(python); 	//On vgg16 le resultat de ça
 }
 
-static void CalculMoyennePatch(vpImage<vpYCbCr> &I, vpImage<unsigned char> &res,
-    vpImage<double> & ecartType, const int & s)
+static void CalculMoyennePatch(vpImage<vpYCbCr> & I, vpImage<double> & ImoyY, vpImage<double> & ImoyCb, vpImage<double> & ImoyCr,
+    vpImage<double> & ecartTypeY, vpImage<double> & ecartTypeCb,vpImage<double> & ecartTypeCr, const int & s)
 {
 
   int h = I.getHeight();
@@ -554,14 +554,22 @@ static void CalculMoyennePatch(vpImage<vpYCbCr> &I, vpImage<unsigned char> &res,
 
   int compteur = 0; //compteur pour la moyenne
   double sumY = 0;
-  double variance = 0;
+  double sumCb = 0;
+  double sumCr = 0;
+  double varianceY = 0;
+  double varianceCb = 0;
+  double varianceCr = 0;
 	for(int i = 0 ; i<h; i++)
 	{
 		for (int j = 0; j<w; j++)
 		{
-      sumY = 0;
+      sumY  = 0;
+      sumCb = 0;
+      sumCr = 0;
       compteur = 0;
-      variance = 0;
+      varianceY  = 0;
+      varianceCb = 0;
+      varianceCr = 0;
 			for(int ii = -2 ; ii<3; ii++)
 			{
 				for (int jj = -2; jj<3; jj++)
@@ -569,13 +577,20 @@ static void CalculMoyennePatch(vpImage<vpYCbCr> &I, vpImage<unsigned char> &res,
 					if(ii+i >= 0 && ii+i < h && jj+j >= 0 && jj+j < w)
 					{
 						sumY	 += I[ii+i][jj+j].R;
+						sumCb	 += I[ii+i][jj+j].G;
+						sumCr	 += I[ii+i][jj+j].B;
 						compteur++;
 					}
 				}
 			}
 
-			double moyPatchY 	= sumY  / compteur;
-			res[i][j] =  moyPatchY;
+			double moyPatchY  	= sumY   / compteur;
+			double moyPatchCb 	= sumCb  / compteur;
+			double moyPatchCr 	= sumCr  / compteur;
+			
+      ImoyY[i][j]  =  moyPatchY;
+			ImoyCb[i][j] =  moyPatchCb;
+			ImoyCr[i][j] =  moyPatchCr;
 
       for(int ii = -2 ; ii<3; ii++)
 			{
@@ -583,21 +598,27 @@ static void CalculMoyennePatch(vpImage<vpYCbCr> &I, vpImage<unsigned char> &res,
 				{
 					if(ii+i >= 0 && ii+i < h && jj+j >= 0 && jj+j < w)
 					{
-            variance += (I[ii+i][jj+j].R - moyPatchY) * (I[ii+i][jj+j].R - moyPatchY) ;
+            varianceY  += (I[ii+i][jj+j].R - moyPatchY)  * (I[ii+i][jj+j].R - moyPatchY) ;
+            varianceCb += (I[ii+i][jj+j].G - moyPatchCb) * (I[ii+i][jj+j].G - moyPatchCb) ;
+            varianceCr += (I[ii+i][jj+j].B - moyPatchCr) * (I[ii+i][jj+j].B - moyPatchCr) ;
 					}
 				}
 			}
            
-      variance /= compteur;
+      varianceY  /= compteur;
+      varianceCb /= compteur;
+      varianceCr /= compteur;
       
-      ecartType[i][j] = sqrt(variance);
+      ecartTypeY[i][j]  = sqrt(varianceY);
+      ecartTypeCb[i][j] = sqrt(varianceCb);
+      ecartTypeCr[i][j] = sqrt(varianceCr);
 		}
 	}
 }
 
 static void
-PatchManager(vpImage<vpRGBa> &HR, vpImage<double> & ecartType1,
-	vpImage<unsigned char> &resY, vpImage<unsigned char> &resCb,vpImage<unsigned char> &resCr) {
+PatchManager(vpImage<vpRGBa> & HR, vpImage<double> & ecartType1Y, vpImage<double> & ecartType1Cb, vpImage<double> & ecartType1Cr,
+	vpImage<double> & moy1Y, vpImage<double> & moy1Cb, vpImage<double> & moy1Cr) {
 
 	int h_HR = HR.getHeight();
 	int w_HR = HR.getWidth();
@@ -610,7 +631,9 @@ PatchManager(vpImage<vpRGBa> &HR, vpImage<double> & ecartType1,
 	//On sélectionne un patch dans l'image et donc aussi dans les cartes de features
 	double compteur = 0; //compteur pour la moyenne
 	double sumY = 0;double sumCb = 0;double sumCr = 0;
-  double variance = 0;
+  double varianceY = 0;
+  double varianceCb = 0;
+  double varianceCr = 0;
 
 	for(int i = 0 ; i<h_HR; i++)
 	{
@@ -618,7 +641,9 @@ PatchManager(vpImage<vpRGBa> &HR, vpImage<double> & ecartType1,
 		{
       sumY =0; sumCb = 0; sumCr = 0;
       compteur = 0;
-      variance = 0;
+      varianceY = 0;
+      varianceCb = 0;
+      varianceCr = 0;
 			for(int ii = -4 ; ii<5; ii++)
 			{
 				for (int jj = -4; jj<5; jj++)
@@ -637,9 +662,9 @@ PatchManager(vpImage<vpRGBa> &HR, vpImage<double> & ecartType1,
 			double moyPatchCb = sumCb / compteur;
 			double moyPatchCr = sumCr / compteur;
 
-      resY[i][j] 	=  moyPatchY;
-      resCb[i][j] =  moyPatchCb;
-      resCr[i][j] =  moyPatchCr;
+      moy1Y[i][j]  =  moyPatchY;
+      moy1Cb[i][j] =  moyPatchCb;
+      moy1Cr[i][j] =  moyPatchCr;
 
       for(int ii = -4 ; ii<5; ii++)
 			{
@@ -647,21 +672,28 @@ PatchManager(vpImage<vpRGBa> &HR, vpImage<double> & ecartType1,
 				{
 					if(ii+i >= 0 && ii+i < h_HR && jj+j >= 0 && jj+j < w_HR)
 					{
-            variance += (hrY[ii+i][jj+j] - moyPatchY) * (hrY[ii+i][jj+j]- moyPatchY) ;
+            varianceY  += (hrY[ii+i][jj+j]  - moyPatchY)  * (hrY[ii+i][jj+j]  - moyPatchY) ;
+            varianceCb += (hrCb[ii+i][jj+j] - moyPatchCb) * (hrCb[ii+i][jj+j] - moyPatchCb) ;
+            varianceCr += (hrCr[ii+i][jj+j] - moyPatchCr) * (hrCr[ii+i][jj+j] - moyPatchCr) ;
 					}
 				}
 			}
-      variance /= compteur;
+      varianceY  /= compteur;
+      varianceCb /= compteur;
+      varianceCr /= compteur;
       
-      ecartType1[i][j] = sqrt(variance);
+      ecartType1Y[i][j]  = sqrt(varianceY);
+      ecartType1Cb[i][j] = sqrt(varianceCb);
+      ecartType1Cr[i][j] = sqrt(varianceCr);
 		}
 	}
 }
 
 static void
-DicoVectorSelection(vector<vpImage<vpYCbCr> > dicoLR, vector<vpImage<vpYCbCr> > dicoHR,
-	vpImage<unsigned char> &resY, vpImage<unsigned char> &resCb, vpImage<unsigned char> &resCr,
-  vpImage<double> ecartType1, vpImage<vpRGBa> &HR, vpImage<vpRGBa> &resultat) {
+DicoVectorSelection(vector<vpImage<vpYCbCr> > & dicoLR, vector<vpImage<vpYCbCr> > & dicoHR,
+	vpImage<double> & moy1Y, vpImage<double> & moy1Cb, vpImage<double> & moy1Cr,
+  vpImage<double> & ecartType1Y, vpImage<double> & ecartType1Cb, vpImage<double> & ecartType1Cr, 
+  vpImage<vpRGBa> & HR, vpImage<vpRGBa> & resultat) {
 
     int h_HR = HR.getHeight();
     int w_HR = HR.getWidth();
@@ -673,18 +705,54 @@ DicoVectorSelection(vector<vpImage<vpYCbCr> > dicoLR, vector<vpImage<vpYCbCr> > 
 
   int h = dicoLR[0].getHeight(), w = dicoLR[0].getWidth();
   vpImage<vpYCbCr> elementDico(h,w);
-
-  vector<vpImage<unsigned char> > Imoy(256);
+  
+  vector<vpImage<double> > ImoyY(256);
+  vector<vpImage<double> > ImoyCb(256);
+  vector<vpImage<double> > ImoyCr(256);
+  
   vpImage<int> indexY(h_HR,w_HR,0);
+  vpImage<int> indexCb(h_HR,w_HR,0);
+  vpImage<int> indexCr(h_HR,w_HR,0);
+  
+  vpImage<int> index2Y(h_HR,w_HR,0);
+  vpImage<int> index2Cb(h_HR,w_HR,0);
+  vpImage<int> index2Cr(h_HR,w_HR,0);
+  
+  vpImage<int> index3Y(h_HR,w_HR,0);
+  vpImage<int> index3Cb(h_HR,w_HR,0);
+  vpImage<int> index3Cr(h_HR,w_HR,0);
+  
+  vpImage<double> coefY(h_HR,w_HR,0);
+  vpImage<double> coefCb(h_HR,w_HR,0);
+  vpImage<double> coefCr(h_HR,w_HR,0);
+  
+  vpImage<double> coef2Y(h_HR,w_HR,0);
+  vpImage<double> coef2Cb(h_HR,w_HR,0);
+  vpImage<double> coef2Cr(h_HR,w_HR,0);
+  
+  vpImage<double> coef3Y(h_HR,w_HR,0);
+  vpImage<double> coef3Cb(h_HR,w_HR,0);
+  vpImage<double> coef3Cr(h_HR,w_HR,0);
+  
   double meilleurValY = 0;
   double produitScalY = 0;
-  vector<vpImage<double> > ecartType2(256);
+  double meilleurValCb = 0;
+  double produitScalCb = 0;
+  double meilleurValCr = 0;
+  double produitScalCr = 0;
+  vector<vpImage<double> > ecartType2Y(256);
+  vector<vpImage<double> > ecartType2Cb(256);
+  vector<vpImage<double> > ecartType2Cr(256);
 
   for(int s=0; s<256; s++)
   {
-    Imoy[s] = vpImage<unsigned char>(h,w,0);
-    ecartType2[s] = vpImage<double>(h,w,0);
-    CalculMoyennePatch(dicoLR[s], Imoy[s], ecartType2[s], s);
+    ImoyY[s] = vpImage<double>(h,w);
+    ImoyCb[s] = vpImage<double>(h,w);
+    ImoyCr[s] = vpImage<double>(h,w);
+    ecartType2Y[s]  = vpImage<double>(h,w,0);
+    ecartType2Cb[s] = vpImage<double>(h,w,0);
+    ecartType2Cr[s] = vpImage<double>(h,w,0);
+    CalculMoyennePatch(dicoLR[s], ImoyY[s], ImoyCb[s], ImoyCr[s], ecartType2Y[s], ecartType2Cb[s], ecartType2Cr[s], s);
   }
   
   cout << "means & standard deviation : done" << endl;
@@ -694,56 +762,253 @@ DicoVectorSelection(vector<vpImage<vpYCbCr> > dicoLR, vector<vpImage<vpYCbCr> > 
       for (int j = 0; j<w_HR; j++)
       {
         meilleurValY = 0;
+        meilleurValCb = 0;
+        meilleurValCr = 0;
         for (int s = 0; s<256 ; s++)
         {
           produitScalY = 0;
-          
+          produitScalCb = 0;
+          produitScalCr = 0;
+          int cpt = 0;
           for(int ii = -4 ; ii<5; ii++)
           {
             for (int jj = -4; jj<5; jj++)
             {
               if(ii+i >= 0 && ii+i < h_HR-6 && jj+j >= 0 && jj+j < w_HR)
               {
-                produitScalY  += (hrY[ii+i][jj+j] - resY[i][j]) * (dicoLR[s][(ii+i)>>1][(jj+j)>>1].R - Imoy[s][i>>1][j>>1]);
+                produitScalY   += (hrY[ii+i][jj+j]  - moy1Y[i][j])  * (dicoLR[s][(ii+i)>>1][(jj+j)>>1].R - ImoyY[s][i>>1][j>>1]);
+                produitScalCb  += (hrCb[ii+i][jj+j] - moy1Cb[i][j]) * (dicoLR[s][(ii+i)>>1][(jj+j)>>1].G - ImoyCb[s][i>>1][j>>1]);
+                produitScalCr  += (hrCr[ii+i][jj+j] - moy1Cr[i][j]) * (dicoLR[s][(ii+i)>>1][(jj+j)>>1].B - ImoyCr[s][i>>1][j>>1]);
+                //produitScalY  +=(double)(hrY[ii+i][jj+j])/255.0  * (double)(dicoLR[s][(ii+i)>>1][(jj+j)>>1].R)/255.0 ;
+                //produitScalCb +=(double)(hrCb[ii+i][jj+j])/255.0 * (double)(dicoLR[s][(ii+i)>>1][(jj+j)>>1].G)/255.0 ;
+                //produitScalCr +=(double)(hrCr[ii+i][jj+j])/255.0 * (double)(dicoLR[s][(ii+i)>>1][(jj+j)>>1].B)/255.0 ;
+                //double y =(double)(hrY[ii+i][jj+j])/255.0  - (double)(dicoLR[s][(ii+i)>>1][(jj+j)>>1].R)/255.0 ;
+                //double cb=(double)(hrCb[ii+i][jj+j])/255.0 - (double)(dicoLR[s][(ii+i)>>1][(jj+j)>>1].G)/255.0 ;
+                //double cr=(double)(hrCr[ii+i][jj+j])/255.0 - (double)(dicoLR[s][(ii+i)>>1][(jj+j)>>1].B)/255.0 ;
+                //produitScalY   += y*y;
+                //produitScalCb  += cb*cb;
+                //produitScalCr  += cr*cr;
+                //produitScalY  += abs((double)(dicoLR[s][(ii+i)>>1][(jj+j)>>1].R)/255.0 - (double)(hrY[ii+i][jj+j])/255.0) ;
+                //produitScalCb += abs((double)(dicoLR[s][(ii+i)>>1][(jj+j)>>1].G)/255.0 - (double)(hrCb[ii+i][jj+j])/255.0) ;
+                //produitScalCr += abs((double)(dicoLR[s][(ii+i)>>1][(jj+j)>>1].B)/255.0 - (double)(hrCr[ii+i][jj+j])/255.0) ;
+                cpt++;
               }
             }
           }
 
-          if(ecartType1[i][j] == 0 ) ecartType1[i][j] = 1;
-          if(ecartType2[s][i>>1][j>>1] == 0 ) ecartType2[s][i>>1][j>>1] = 1;
+          //produitScalY  = sqrt(produitScalY);
+          //produitScalCb = sqrt(produitScalCb);
+          //produitScalCr = sqrt(produitScalCr);
+          
+          produitScalY  /= cpt;
+          produitScalCb /= cpt;
+          produitScalCr /= cpt;
+          
+          if(ecartType1Y[i][j]  == 0 ) ecartType1Y[i][j]  = 1;
+          if(ecartType1Cb[i][j] == 0 ) ecartType1Cb[i][j] = 1;
+          if(ecartType1Cr[i][j] == 0 ) ecartType1Cr[i][j] = 1;
+          
+          if(ecartType2Y[s][i>>1][j>>1]  == 0 ) ecartType2Y[s][i>>1][j>>1]  = 1;
+          if(ecartType2Cb[s][i>>1][j>>1] == 0 ) ecartType2Cb[s][i>>1][j>>1] = 1;
+          if(ecartType2Cr[s][i>>1][j>>1] == 0 ) ecartType2Cr[s][i>>1][j>>1] = 1;
+          
         
-          produitScalY /= ecartType1[i][j]*ecartType2[s][i>>1][j>>1];
-       
+          produitScalY  /= ecartType1Y[i][j]  * ecartType2Y[s][i>>1][j>>1];
+          produitScalCb /= ecartType1Cb[i][j] * ecartType2Cb[s][i>>1][j>>1];
+          produitScalCr /= ecartType1Cr[i][j] * ecartType2Cr[s][i>>1][j>>1];
+     
           if(produitScalY > meilleurValY)
           {
             meilleurValY = produitScalY;
             indexY[i][j] = s;
+            coefY[i][j] = meilleurValY;
+          }  
+          if(produitScalCb > meilleurValCb)
+          {
+            meilleurValCb = produitScalCb;
+            indexCb[i][j] = s;
+            coefCb[i][j] = meilleurValCb;
+          }  
+          if(produitScalCr > meilleurValCr)
+          {
+            meilleurValCr = produitScalCr;
+            indexCr[i][j] = s;
+            coefCr[i][j] = meilleurValCr;
+          }  
+        }
+        
+        // --------------------------------------
+        meilleurValY = 0;
+        meilleurValCb = 0;
+        meilleurValCr = 0;
+        for (int s = 0; s<256 ; s++)
+        {
+          produitScalY = 0;
+          produitScalCb = 0;
+          produitScalCr = 0;
+          int cpt = 0;
+          for(int ii = -4 ; ii<5; ii++)
+          {
+            for (int jj = -4; jj<5; jj++)
+            {
+              if(ii+i >= 0 && ii+i < h_HR-6 && jj+j >= 0 && jj+j < w_HR)
+              {
+                produitScalY   += (hrY[ii+i][jj+j]  - moy1Y[i][j])  * (dicoLR[s][(ii+i)>>1][(jj+j)>>1].R - ImoyY[s][i>>1][j>>1]);
+                produitScalCb  += (hrCb[ii+i][jj+j] - moy1Cb[i][j]) * (dicoLR[s][(ii+i)>>1][(jj+j)>>1].G - ImoyCb[s][i>>1][j>>1]);
+                produitScalCr  += (hrCr[ii+i][jj+j] - moy1Cr[i][j]) * (dicoLR[s][(ii+i)>>1][(jj+j)>>1].B - ImoyCr[s][i>>1][j>>1]);
+                cpt++;
+              }
+            }
+          }
+
+          produitScalY  /= cpt;
+          produitScalCb /= cpt;
+          produitScalCr /= cpt;
+          
+          if(ecartType1Y[i][j]  == 0 ) ecartType1Y[i][j]  = 1;
+          if(ecartType1Cb[i][j] == 0 ) ecartType1Cb[i][j] = 1;
+          if(ecartType1Cr[i][j] == 0 ) ecartType1Cr[i][j] = 1;
+          
+          if(ecartType2Y[s][i>>1][j>>1]  == 0 ) ecartType2Y[s][i>>1][j>>1]  = 1;
+          if(ecartType2Cb[s][i>>1][j>>1] == 0 ) ecartType2Cb[s][i>>1][j>>1] = 1;
+          if(ecartType2Cr[s][i>>1][j>>1] == 0 ) ecartType2Cr[s][i>>1][j>>1] = 1;
+          
+        
+          produitScalY  /= ecartType1Y[i][j]  * ecartType2Y[s][i>>1][j>>1];
+          produitScalCb /= ecartType1Cb[i][j] * ecartType2Cb[s][i>>1][j>>1];
+          produitScalCr /= ecartType1Cr[i][j] * ecartType2Cr[s][i>>1][j>>1];
+         
+          if(s != indexY[i][j] && produitScalY > meilleurValY)
+          {
+            meilleurValY = produitScalY;
+            index2Y[i][j] = s;
+            coef2Y[i][j] = meilleurValY;
+          }  
+          if(s != indexCb[i][j] && produitScalCb > meilleurValCb)
+          {
+            meilleurValCb = produitScalCb;
+            index2Cb[i][j] = s;
+            coef2Cb[i][j] = meilleurValCb;
+          }  
+          if(s != indexCr[i][j] && produitScalCr > meilleurValCr)
+          {
+            meilleurValCr = produitScalCr;
+            index2Cr[i][j] = s;
+            coef2Cr[i][j] = meilleurValCr;
+          }  
+        }
+        
+        // --------------------------------------
+        meilleurValY = 0;
+        meilleurValCb = 0;
+        meilleurValCr = 0;
+        for (int s = 0; s<256 ; s++)
+        {
+          produitScalY = 0;
+          produitScalCb = 0;
+          produitScalCr = 0;
+          int cpt = 0;
+          for(int ii = -4 ; ii<5; ii++)
+          {
+            for (int jj = -4; jj<5; jj++)
+            {
+              if(ii+i >= 0 && ii+i < h_HR-6 && jj+j >= 0 && jj+j < w_HR)
+              {
+                produitScalY   += (hrY[ii+i][jj+j]  - moy1Y[i][j])  * (dicoLR[s][(ii+i)>>1][(jj+j)>>1].R - ImoyY[s][i>>1][j>>1]);
+                produitScalCb  += (hrCb[ii+i][jj+j] - moy1Cb[i][j]) * (dicoLR[s][(ii+i)>>1][(jj+j)>>1].G - ImoyCb[s][i>>1][j>>1]);
+                produitScalCr  += (hrCr[ii+i][jj+j] - moy1Cr[i][j]) * (dicoLR[s][(ii+i)>>1][(jj+j)>>1].B - ImoyCr[s][i>>1][j>>1]);
+                cpt++;
+              }
+            }
+          }
+
+          produitScalY  /= cpt;
+          produitScalCb /= cpt;
+          produitScalCr /= cpt;
+          
+          if(ecartType1Y[i][j]  == 0 ) ecartType1Y[i][j]  = 1;
+          if(ecartType1Cb[i][j] == 0 ) ecartType1Cb[i][j] = 1;
+          if(ecartType1Cr[i][j] == 0 ) ecartType1Cr[i][j] = 1;
+          
+          if(ecartType2Y[s][i>>1][j>>1]  == 0 ) ecartType2Y[s][i>>1][j>>1]  = 1;
+          if(ecartType2Cb[s][i>>1][j>>1] == 0 ) ecartType2Cb[s][i>>1][j>>1] = 1;
+          if(ecartType2Cr[s][i>>1][j>>1] == 0 ) ecartType2Cr[s][i>>1][j>>1] = 1;
+          
+        
+          produitScalY  /= ecartType1Y[i][j]  * ecartType2Y[s][i>>1][j>>1];
+          produitScalCb /= ecartType1Cb[i][j] * ecartType2Cb[s][i>>1][j>>1];
+          produitScalCr /= ecartType1Cr[i][j] * ecartType2Cr[s][i>>1][j>>1];
+     
+          if(s != indexY[i][j] && s != index2Y[i][j] && produitScalY > meilleurValY)
+          {
+            meilleurValY = produitScalY;
+            index3Y[i][j] = s;
+            coef3Y[i][j] = meilleurValY;
+          }  
+          if(s != indexCb[i][j] && s != index2Cb[i][j] && produitScalCb > meilleurValCb)
+          {
+            meilleurValCb = produitScalCb;
+            index3Cb[i][j] = s;
+            coef3Cb[i][j] = meilleurValCb;
+          }  
+          if(s != indexCr[i][j] && s != index2Cr[i][j] && produitScalCr > meilleurValCr)
+          {
+            meilleurValCr = produitScalCr;
+            index3Cr[i][j] = s;
+            coef3Cr[i][j] = meilleurValCr;
           }  
         }
       }
     }
   
+  
+  // prendre plusieurs vecteurs et faire une moyenne pondérée 
+  
   cout << "indexation done" <<endl;
+  vpImage<unsigned char> testY(h_HR, w_HR, 0);
+  vpImage<unsigned char> testCb(h_HR, w_HR, 0);
+  vpImage<unsigned char> testCr(h_HR, w_HR, 0);
   
   for(int i = 0 ; i<h_HR-6; i++)
     {
       for (int j = 0; j<w_HR; j++)
       { 
-	      resYCbCr[i][j].R = dicoHR[indexY[i][j]][i>>1][j>>1].R; 
-	      resYCbCr[i][j].G = dicoHR[indexY[i][j]][i>>1][j>>1].G;
-	      resYCbCr[i][j].B = dicoHR[indexY[i][j]][i>>1][j>>1].B;
+        int y  = (dicoHR[indexY[i][j]][i>>1][j>>1].R  * coefY[i][j]  + dicoHR[index2Y[i][j]][i>>1][j>>1].R  * coef2Y[i][j]  + dicoHR[index3Y[i][j]][i>>1][j>>1].R  * coef3Y[i][j]  )/(coefY[i][j]+coef2Y[i][j]+coef3Y[i][j]);
+        int cb = (dicoHR[indexCb[i][j]][i>>1][j>>1].G * coefCb[i][j] + dicoHR[index2Cb[i][j]][i>>1][j>>1].G * coef2Cb[i][j] + dicoHR[index3Cb[i][j]][i>>1][j>>1].G * coef3Cb[i][j] )/(coefCb[i][j]+coef2Cb[i][j]+coef3Cb[i][j]);
+        int cr = (dicoHR[indexCr[i][j]][i>>1][j>>1].B * coefCr[i][j] + dicoHR[index2Cr[i][j]][i>>1][j>>1].B * coef2Cr[i][j] + dicoHR[index3Cr[i][j]][i>>1][j>>1].B * coef3Cr[i][j] )/(coefCr[i][j]+coef2Cr[i][j]+coef3Cr[i][j]);
+          
+        if(y<0) y=0;
+        if(y>255) y=255;
+        if(cb<0) cb=0;
+        if(cb>255) cb=255;
+        if(cr<0) cr=0;
+        if(cr>255) cr=255;
         
-        cout << "RGB = " << (int)resYCbCr[i][j].R << " ; " << (int)resYCbCr[i][j].G << " ; " << (int)resYCbCr[i][j].R << endl; 
+        testY[i][j]  = y;
+        testCb[i][j] = cb;
+        testCr[i][j] = cr; 
+	      
+	      resYCbCr[i][j].R = y; 
+	      resYCbCr[i][j].G = cb;
+	      resYCbCr[i][j].B = cr;
+  
+        //cout << "index = " << (int)indexY[i][j] << " ; " << (int)indexCb[i][j] << " ; " << (int)indexCr[i][j] << "\t\t\tYCbCr = " << (int)resYCbCr[i][j].R << " ; " << (int)resYCbCr[i][j].G << " ; " << (int)resYCbCr[i][j].B << endl; 
       }
    }
+  
+  
+	vpImageIo::write(testY,"../data/img/testY.png") ;
+	vpImageIo::write(testCb,"../data/img/testCb.png") ;
+	vpImageIo::write(testCr,"../data/img/testCr.png") ;
+
   
    vpYCbCr_to_RGB(resYCbCr, resultat);
 }
 
 
 static void
-Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR,
-  vector<vpImage<vpYCbCr> > dicoLR,vector<vpImage<vpYCbCr> > dicoHR)
+Reconstruction(vpImage<vpRGBa> & LR, vpImage<vpRGBa> & HR,
+  vector<vpImage<vpYCbCr> > & dicoLR, vector<vpImage<vpYCbCr> > & dicoHR)
 {
 
 	int h = HR.getHeight();
@@ -751,28 +1016,37 @@ Reconstruction(vpImage<vpRGBa> &LR, vpImage<vpRGBa> &HR,
 
 	vpImage<vpRGBa> resultat(h,w);
 
-	vpImage<unsigned char> featureY(h,w);
-	vpImage<unsigned char> featureCb(h,w);
-	vpImage<unsigned char> featureCr(h,w);
-  vpImage<double> ecartType1(h,w);
+	vpImage<double> moy1Y(h,w);
+	vpImage<double> moy1Cb(h,w);
+	vpImage<double> moy1Cr(h,w);
+  
+	vpImage<unsigned char> HR_Y(h,w);
+	vpImage<unsigned char> HR_Cb(h,w);
+	vpImage<unsigned char> HR_Cr(h,w);
+  
+  vpImage<double> ecartType1Y(h,w);
+  vpImage<double> ecartType1Cb(h,w);
+  vpImage<double> ecartType1Cr(h,w);
 
 	bicubicresize(LR, HR); // HR est l'image agrandi BF (bicubique ou lineaire interpol)
-
-	//Python_Features(featureY,"Reconst_HR_Y"); //On obtient des cartes de features
-  //Python_Features(featureCb,"Reconst_HR_Cb"); //On obtient des cartes de features
-  //Python_Features(featureCr,"Reconst_HR_Cr"); //On obtient des cartes de features
-
-  //system("python CAV.py lion.jpg"); 	//On vgg16 le resultat de ça
   
-	PatchManager(HR, ecartType1, featureY,featureCb,featureCr);
+  RGBtoYUV(HR, HR_Y, HR_Cb, HR_Cr);
+
+	//Python_Features(HR_Y,"Reconst_HR_Y"); //On obtient des cartes de features
+  //Python_Features(HR_Cb,"Reconst_HR_Cb"); //On obtient des cartes de features
+  //Python_Features(HR_Cr,"Reconst_HR_Cr"); //On obtient des cartes de features
+
+  //system("python CAV.py lion.png"); 	//On vgg16 le resultat de ça
+  
+	PatchManager(HR, ecartType1Y, ecartType1Cb, ecartType1Cr, moy1Y, moy1Cb, moy1Cr);
   
 	//On sélectionne le meilleur vecteur du dico correspondant à notre vecteur actuel
-	DicoVectorSelection(dicoLR, dicoHR, featureY, featureCb, featureCr, ecartType1, HR, resultat);
+	DicoVectorSelection(dicoLR, dicoHR, moy1Y, moy1Cb, moy1Cr, ecartType1Y, ecartType1Cb, ecartType1Cr, HR, resultat);
 
 	//garder le coef de correlation
 
 	//save
-	vpImageIo::write(resultat,"../data/img/superRes.jpg") ;
+	vpImageIo::write(resultat,"../data/img/superRes.png") ;
 
 }
 
@@ -792,14 +1066,14 @@ int main()
   
 
   vpImage<vpRGBa> I_LR;
-  vpImageIo::read(I_LR,"../data/img/lionReconst_LR.jpg") ;
+  vpImageIo::read(I_LR,"../data/img/lionReconst_LR.png") ;
   int h=I_LR.getHeight(), w=I_LR.getWidth();
   vpImage<vpRGBa> I_HR(h*2,w*2,0);
   
 
   cout << "Reconstruction: Init" << endl;
   
-  Reconstruction(I_LR,I_HR,dicoLR,dicoHR);
+  Reconstruction(I_LR, I_HR, dicoLR, dicoHR);
   
   cout << "Reconstruction: Done" << endl;
   
